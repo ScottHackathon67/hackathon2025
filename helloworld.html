@@ -59,6 +59,89 @@
       font-size: 2rem;
       margin-bottom: 10px;
     }
+
+    /* Chatbot button and panel styles */
+    #chatbotToggle {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1050;
+      border-radius: 50%;
+      width: 64px;
+      height: 64px;
+      font-size: 2rem;
+      box-shadow: 0 0 16px rgba(0,0,0,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--frontier-red);
+      color: #fff;
+      border: none;
+    }
+    #chatbotToggle:focus {
+      outline: 3px solid #fff;
+    }
+    #chatbotPanel {
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      width: 330px;
+      max-width: 94vw;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 32px rgba(0,0,0,0.20);
+      z-index: 1060;
+      overflow: hidden;
+      display: none;
+      flex-direction: column;
+      border: 2px solid var(--frontier-red);
+    }
+    #chatbotHeader {
+      background: var(--frontier-red);
+      color: #fff;
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    #chatbotBody {
+      background: #f8f9fb;
+      padding: 1rem;
+      min-height: 180px;
+      max-height: 260px;
+      overflow-y: auto;
+      font-size: 0.98rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .chat-rep {
+      align-self: flex-start;
+      background: #e9ecef;
+      color: var(--frontier-red);
+      padding: 7px 14px;
+      border-radius: 13px 13px 13px 3px;
+      margin-bottom: 2px;
+      max-width: 80%;
+    }
+    .chat-user {
+      align-self: flex-end;
+      background: var(--frontier-red);
+      color: #fff;
+      padding: 7px 14px;
+      border-radius: 13px 13px 3px 13px;
+      margin-bottom: 2px;
+      max-width: 80%;
+    }
+    #chatbotFooter {
+      background: #fff;
+      padding: 0.5rem 1rem 1rem 1rem;
+      border-top: 1px solid #eee;
+    }
+
+    @media (max-width: 575px) {
+      #chatbotPanel { width: 98vw; right: 1vw; }
+    }
   </style>
 </head>
 <body style="background: var(--frontier-light)">
@@ -244,6 +327,31 @@
     </div>
   </div>
 
+  <!-- Chatbot Floating Button -->
+  <button id="chatbotToggle" aria-label="Chat with a Frontier Rep">
+    <i class="bi bi-chat-dots"></i>
+  </button>
+
+  <!-- Chatbot Panel -->
+  <div id="chatbotPanel" class="d-flex flex-column">
+    <div id="chatbotHeader">
+      <span>
+        <i class="bi bi-robot text-white me-1"></i>
+        Frontier Chat Rep
+      </span>
+      <button type="button" class="btn-close btn-close-white btn-sm ms-auto" aria-label="Close" id="closeChatPanel" style="filter:brightness(90%);"></button>
+    </div>
+    <div id="chatbotBody">
+      <div class="chat-rep">👋 Hello! I'm your virtual Frontier rep. How can I help you today?</div>
+    </div>
+    <form id="chatbotFooter" autocomplete="off">
+      <div class="input-group">
+        <input type="text" id="chatInput" class="form-control" placeholder="Type your question..." aria-label="Type your question">
+        <button class="btn btn-frontier" type="submit" id="chatSendBtn"><i class="bi bi-send"></i></button>
+      </div>
+    </form>
+  </div>
+
   <!-- Footer -->
   <footer class="footer mt-5 py-3 bg-dark border-top">
     <div class="container text-center">
@@ -268,6 +376,94 @@
       });
     });
   </script>
+  <!-- Simple Chatbot Demo Logic -->
+  <script>
+    // ChatBot variables
+    const chatbotToggle = document.getElementById('chatbotToggle');
+    const chatbotPanel = document.getElementById('chatbotPanel');
+    const chatbotBody = document.getElementById('chatbotBody');
+    const chatForm = document.getElementById('chatbotFooter');
+    const chatInput = document.getElementById('chatInput');
+    const closeChatPanel = document.getElementById('closeChatPanel');
+
+    chatbotToggle.addEventListener('click', function() {
+      chatbotPanel.style.display = chatbotPanel.style.display === 'flex' ? 'none' : 'flex';
+      if(chatbotPanel.style.display === 'flex') {
+        setTimeout(() => chatInput.focus(), 300);
+      }
+    });
+
+    closeChatPanel.addEventListener('click', function() {
+      chatbotPanel.style.display = 'none';
+    });
+
+    // Simple response logic for demo
+    function chatbotResponse(userText) {
+      const responses = [
+        {
+          keywords: ['fiber', 'internet'],
+          reply: "Our Fiber Internet offers gig speeds, perfect for streaming and remote work! Want to see available plans?"
+        },
+        {
+          keywords: ['bundle', 'tv'],
+          reply: "You can easily bundle TV streaming services with Frontier for extra savings. Want details?"
+        },
+        {
+          keywords: ['support', 'help', 'problem', 'issue'],
+          reply: "I'm here to help! Tell me more about the issue you're facing, or try our <a href='#' class='text-frontier-red'>Support Portal</a>."
+        },
+        {
+          keywords: ['contact', 'speak', 'agent', 'person'],
+          reply: "You can <b>Contact Us</b> directly or I can connect you to a human representative."
+        },
+        {
+          keywords: ['price', 'cost'],
+          reply: "Our pricing is transparent! <a href='#' class='text-frontier-red'>See current offers</a> or specify your location for more details."
+        },
+        {
+          keywords: ['hi', 'hello', 'hey'],
+          reply: "Hi there! 👋 How can I assist you with Frontier services today?"
+        }
+      ];
+      userText = userText.toLowerCase();
+      for(let i=0; i<responses.length; i++) {
+        if(responses[i].keywords.some(k => userText.includes(k))) {
+          return responses[i].reply;
+        }
+      }
+      return "I'm not sure about that, but you can ask me about Fiber Internet, TV, support, pricing, or contact options!";
+    }
+
+    chatForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const userMsg = chatInput.value.trim();
+      if(!userMsg) return;
+      // Show user message
+      const userDiv = document.createElement('div');
+      userDiv.className = 'chat-user';
+      userDiv.textContent = userMsg;
+      chatbotBody.appendChild(userDiv);
+
+      // Simulate bot response
+      setTimeout(() => {
+        const repDiv = document.createElement('div');
+        repDiv.className = 'chat-rep';
+        repDiv.innerHTML = chatbotResponse(userMsg);
+        chatbotBody.appendChild(repDiv);
+        chatbotBody.scrollTop = chatbotBody.scrollHeight;
+      }, 600);
+      chatbotBody.scrollTop = chatbotBody.scrollHeight;
+      chatInput.value = '';
+    });
+
+    // Close chatbot if click outside
+    document.addEventListener('mousedown', function(event) {
+      if(chatbotPanel.style.display === 'flex' && !chatbotPanel.contains(event.target) && event.target !== chatbotToggle){
+        chatbotPanel.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 </html>
+
 
