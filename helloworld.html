@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hello World - Frontier Communications Demo</title>
+  <!-- Bootstrap 5.3 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="icon" type="image/png" href="https://www.frontier.com/resources/images/favicon.ico" />
+  <style>
+    /* Frontier Colors & Branding */
+    :root {
+      --frontier-red: #D61A23;
+      --frontier-dark: #1A1A1A;
+      --frontier-light: #f3f3f5;
+    }
+
+    .bg-frontier-red {
+      background-color: var(--frontier-red) !important;
+    }
+    .text-frontier-red {
+      color: var(--frontier-red) !important;
+    }
+    .btn-frontier {
+      background-color: var(--frontier-red);
+      color: white;
+      border: none;
+    }
+    .btn-frontier:hover {
+      background-color: #aa161c;
+      color: white;
+    }
+
+    .wave {
+      animation: wave-animation 2s infinite;
+      display: inline-block;
+      transform-origin: 70% 70%;
+    }
+    @keyframes wave-animation {
+      0% { transform: rotate(0deg);}
+      10% { transform: rotate(14deg);}
+      20% { transform: rotate(-8deg);}
+      30% { transform: rotate(14deg);}
+      40% { transform: rotate(-4deg);}
+      50% { transform: rotate(10deg);}
+      60% { transform: rotate(0deg);}
+      100% { transform: rotate(0deg);}
+    }
+    /* For some card icons */
+    .icon-circle {
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--frontier-red);
+      color: #fff;
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body style="background: var(--frontier-light)">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-frontier-red shadow">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="https://www.frontier.com/resources/images/frontier-logo.svg" alt="Frontier Communications" height="34" class="me-2" style="background: #fff; border-radius: 6px; padding: 2px 8px;">
+        <span class="fw-bold">Frontier Communications</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link active fw-bold" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold" href="#">Plans</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold" href="#">Support</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold" href="#">About Frontier</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container mt-5">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <h1 class="display-3 fw-bold text-frontier-red mb-3">
+          Hello, Frontier! <span class="wave">🌐</span>
+        </h1>
+        <p class="lead text-secondary">
+          Welcome to the Frontier Communications themed Bootstrap demo. Explore Frontier’s digital solutions with a showcase of modern interface components.
+        </p>
+        <!-- Buttons with tooltip and modal -->
+        <div class="mb-4">
+          <button type="button" class="btn btn-frontier me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Learn more about Fiber Internet!">
+            <i class="bi bi-lightning-charge"></i> Fiber Power
+          </button>
+          <button type="button" class="btn btn-outline-frontier me-2" style="color:var(--frontier-red);border:1px solid var(--frontier-red)" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Contact Us
+          </button>
+          <a href="#" class="btn btn-outline-dark">See Plans</a>
+        </div>
+        <!-- Alerts -->
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" style="border-left: 8px solid var(--frontier-red)">
+          <strong>Frontier Update:</strong> Try our ultra-fast <span class="fw-bold">Frontier Fiber Internet</span> today!
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="col-md-6 text-center">
+        <!-- Carousel -->
+        <div id="helloCarousel" class="carousel slide rounded shadow" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img src="https://www.frontier.com/resources/images/promo/hp-hero-fiber-gamer.webp" class="d-block w-100 rounded" alt="Frontier Fiber">
+              <div class="carousel-caption d-none d-md-block bg-frontier-red rounded-3 py-1 px-2 opacity-75">
+                <h5 class="text-white mb-0">Ultra-Fast Internet</h5>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <img src="https://www.frontier.com/resources/images/promo/hp-fiber-tv-multi.webp" class="d-block w-100 rounded" alt="Frontier TV">
+              <div class="carousel-caption d-none d-md-block bg-frontier-red rounded-3 py-1 px-2 opacity-75">
+                <h5 class="text-white mb-0">Crystal-Clear Streaming</h5>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <img src="https://www.frontier.com/resources/images/promo/hero-phone-new.webp" class="d-block w-100 rounded" alt="Frontier Phone">
+              <div class="carousel-caption d-none d-md-block bg-frontier-red rounded-3 py-1 px-2 opacity-75">
+                <h5 class="text-white mb-0">Reliable Home Phone</h5>
+              </div>
+            </div>
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#helloCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#helloCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accordions -->
+    <div class="accordion mt-5" id="exampleAccordion">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            Why choose Frontier?
+          </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#exampleAccordion">
+          <div class="accordion-body">
+            <strong>Frontier Communications</strong> delivers ultra-fast, reliable fiber internet and home services, supported by a friendly, local customer service team.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingTwo">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+            What's new at Frontier?
+          </button>
+        </h2>
+        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#exampleAccordion">
+          <div class="accordion-body">
+            Now offering Wi-Fi 6E routers, unlimited data, and no hidden monthly fees! <a href="https://www.frontier.com/" target="_blank">Learn more</a>.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cards Row - Frontier Services -->
+    <div class="row mt-5 g-4 align-items-stretch">
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="icon-circle mx-auto mt-4 mb-2"><i class="bi bi-lightning"></i></div>
+          <div class="card-body text-center">
+            <h5 class="card-title text-frontier-red">Fiber Internet</h5>
+            <p class="card-text">Experience gig speeds for streaming, gaming and working from home—reliability you can trust.</p>
+            <a href="https://www.frontier.com/" target="_blank" class="btn btn-frontier w-100">Shop Fiber</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="icon-circle mx-auto mt-4 mb-2"><i class="bi bi-tv"></i></div>
+          <div class="card-body text-center">
+            <h5 class="card-title text-frontier-red">Streaming TV</h5>
+            <p class="card-text">Bundle your streaming services for awesome entertainment, minus the hassle.</p>
+            <a href="https://www.frontier.com/resources/tv" target="_blank" class="btn btn-frontier w-100">Explore TV</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="icon-circle mx-auto mt-4 mb-2"><i class="bi bi-telephone-fill"></i></div>
+          <div class="card-body text-center">
+            <h5 class="card-title text-frontier-red">Home Phone</h5>
+            <p class="card-text">Stay connected with crystal-clear home phone service and nationwide calling.</p>
+            <a href="https://www.frontier.com/resources/phone" target="_blank" class="btn btn-frontier w-100">Get Phone</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content border-danger">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 text-frontier-red" id="exampleModalLabel">Contact Frontier</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-2">
+              <label for="contactName" class="form-label">Name</label>
+              <input type="text" class="form-control" id="contactName" placeholder="Jane Doe">
+            </div>
+            <div class="mb-2">
+              <label for="contactEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="contactEmail" placeholder="you@example.com">
+            </div>
+            <div class="mb-3">
+              <label for="contactMsg" class="form-label">Message</label>
+              <textarea class="form-control" id="contactMsg" rows="2" placeholder="Your message..."></textarea>
+            </div>
+            <button type="button" class="btn btn-frontier w-100" data-bs-dismiss="modal">Send</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer mt-5 py-3 bg-dark border-top">
+    <div class="container text-center">
+      <img src="https://www.frontier.com/resources/images/frontier-logo-white.svg" alt="Frontier" height="24" class="mb-2"><br>
+      <span class="text-light small">
+        &copy; 2025 Frontier Communications. Made for Hackathon. All rights reserved.<br>
+        <a href="https://www.frontier.com/" class="text-frontier-red text-decoration-none" target="_blank">www.frontier.com</a>
+      </span>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS & Bootstrap Icons (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Enable tooltips -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl)
+      });
+    });
+  </script>
+</body>
+</html>
+
