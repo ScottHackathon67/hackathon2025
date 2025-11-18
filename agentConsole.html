@@ -216,6 +216,60 @@
             margin: 20px 0;
         }
 
+        .history-content {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .history-section {
+            background: #F9F9F9;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #3B82F6;
+        }
+
+        .history-section h3 {
+            font-size: 15px;
+            margin-bottom: 10px;
+            color: #1F2937;
+        }
+
+        .history-section ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        .history-section li {
+            padding: 6px 0;
+            font-size: 14px;
+            color: #374151;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .history-section li:last-child {
+            border-bottom: none;
+        }
+
+        .history-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #E0F2FE;
+            color: #0369A1;
+            margin-right: 8px;
+            font-weight: 600;
+        }
+
+        .history-meta {
+            font-size: 12px;
+            color: #6B7280;
+        }
+
         .btn {
             padding: 12px 20px;
             border: none;
@@ -748,15 +802,26 @@
                 <button class="btn btn-secondary">
                     <span id="btn-account">👤 View Full Account</span>
                 </button>
-                <button class="btn btn-outline">
-                    <span id="btn-history">📋 View Service History</span>
+                <button class="btn btn-outline" onclick="analyzeHistory()">
+                    <span id="btn-history">📋 Analyze Service History</span>
                 </button>
                 <button class="btn btn-outline">
                     <span id="btn-escalate">📤 Escalate to Specialist</span>
                 </button>
                 <button class="btn btn-outline" onclick="requestVideoInterpreter()">
-                    <span id="btn-interpreter">🧏 Request an ASL Interpereter Video Call</span>
+                    <span id="btn-interpreter">🧏 Request an ASL Interpreter Video Call</span>
                 </button>
+            </div>
+        </div>
+
+        <!-- Customer History Insights -->
+        <div class="card" id="history-card">
+            <div class="card-header">
+                <span class="card-icon">📚</span>
+                <h2 id="card-history">Service History Insights</h2>
+            </div>
+            <div id="history-content" class="history-content">
+                <p id="history-placeholder">Click "Analyze Service History" to look for problem trends, hot spots, or chronic complaints.</p>
             </div>
         </div>
 
@@ -1031,9 +1096,15 @@
                 'card.actions': 'Quick Actions',
                 'btn.start': '✓ Start Diagnostics',
                 'btn.account': '👤 View Full Account',
-                'btn.history': '📋 View Service History',
+                'btn.history': '📋 Analyze Service History',
                 'btn.escalate': '📤 Escalate to Specialist',
-                'btn.interpreter': '🧏 Request an ASL Interpereter Video Call',
+                'btn.interpreter': '🧏 Request an ASL Interpreter Video Call',
+                'card.history': 'Service History Insights',
+                'history.placeholder': 'Click "Analyze Service History" to look for problem trends, hot spots, or chronic complaints.',
+                'history.section.trends': 'Problem Trends',
+                'history.section.hotspots': 'Trouble Hot Spots',
+                'history.section.chronic': 'Chronic Complaints',
+                'history.lastUpdated': 'Last updated',
                 'card.next': 'Next Steps',
                 'step.1': 'Run diagnostics on Home Phone service',
                 'step.2': 'Check line quality and connection status',
@@ -1089,9 +1160,15 @@
                 'card.actions': 'Acciones Rápidas',
                 'btn.start': '✓ Iniciar Diagnósticos',
                 'btn.account': '👤 Ver Cuenta Completa',
-                'btn.history': '📋 Ver Historial de Servicio',
+                'btn.history': '📋 Analizar Historial de Servicio',
                 'btn.escalate': '📤 Escalar a Especialista',
                 'btn.interpreter': '🧏 Solicitar videollamada con intérprete ASL',
+                'card.history': 'Análisis del Historial de Servicio',
+                'history.placeholder': 'Haz clic en "Analizar historial de servicio" para buscar tendencias de problemas, áreas conflictivas o quejas crónicas.',
+                'history.section.trends': 'Tendencias de problemas',
+                'history.section.hotspots': 'Zonas con más incidencias',
+                'history.section.chronic': 'Quejas crónicas',
+                'history.lastUpdated': 'Última actualización',
                 'card.next': 'Próximos Pasos',
                 'step.1': 'Ejecutar diagnósticos en servicio de Teléfono Residencial',
                 'step.2': 'Verificar calidad de línea y estado de conexión',
@@ -1116,6 +1193,11 @@
                 'footer.text': 'Panel de Agente v2.0 | Modo de Prueba - Impulsado por Diagnósticos IA',
                 'modal.title': '📄 Transcripción Completa de la Conversación'
             }
+        };
+
+        const t = (key) => {
+            const langTable = translations[currentDashboardLang] || translations['en'];
+            return langTable[key] || translations['en'][key] || key;
         };
 
         // Test Case Data (adding TTY option)
@@ -1310,6 +1392,48 @@
 
         let currentTestCase = 'spanish-phone';
         let currentDashboardLang = 'en';
+        let lastHistoryInsights = null;
+
+        const historyInsights = {
+            'spanish-phone': {
+                lastUpdated: 'Today • 9:42 AM',
+                trends: [
+                    { badge: '☎ Home Phone', detail: '3 reports of no dial tone in the last 30 days' },
+                    { badge: '⚡ Power', detail: '2 outages correlated with storms in the service area' }
+                ],
+                hotspots: [
+                    { badge: '📍 Dallas CO', detail: 'Node FTR-22 showing 18% higher trouble calls' },
+                    { badge: '🕒 Evenings', detail: 'Call spikes between 7-9 PM' }
+                ],
+                chronic: [
+                    { badge: '📞 Voice quality', detail: 'Customer contacted support 5 times over 90 days for similar issue' }
+                ]
+            },
+            'hearing-impaired': {
+                lastUpdated: 'Yesterday • 4:18 PM',
+                trends: [
+                    { badge: '🌐 Internet', detail: 'Frequent modem resets detected (6 in 48 hrs)' }
+                ],
+                hotspots: [
+                    { badge: '📍 Phoenix AZ', detail: 'Two adjacent fiber splits with elevated errors' }
+                ],
+                chronic: [
+                    { badge: '♿ Accessibility', detail: 'Customer prefers TTY callbacks; prior commitments missed twice' }
+                ]
+            },
+            default: {
+                lastUpdated: 'This week',
+                trends: [
+                    { badge: '📡 Network', detail: 'No repeating trouble trend detected for this service' }
+                ],
+                hotspots: [
+                    { badge: '🗺 Region', detail: 'No geographic hot spots identified' }
+                ],
+                chronic: [
+                    { badge: '👍 Healthy account', detail: 'No chronic complaint flags currently on file' }
+                ]
+            }
+        };
 
         // Show Language Prompt Modal
         function showLanguagePrompt() {
@@ -1359,6 +1483,8 @@
                 'btn-history': 'btn.history',
                 'btn-escalate': 'btn.escalate',
                 'btn-interpreter': 'btn.interpreter',
+                'card-history': 'card.history',
+                'history-placeholder': 'history.placeholder',
                 'card-next': 'card.next',
                 'step-1': 'step.1',
                 'step-2': 'step.2',
@@ -1391,6 +1517,14 @@
             if (t['completed.2']) document.getElementById('completed-2').innerHTML = t['completed.2'];
             if (t['completed.3']) document.getElementById('completed-3').innerHTML = t['completed.3'];
             if (t['completed.4']) document.getElementById('completed-4').innerHTML = t['completed.4'];
+            if (lastHistoryInsights) {
+                renderHistoryInsights(lastHistoryInsights, true);
+            } else {
+                const placeholder = document.getElementById('history-placeholder');
+                if (placeholder && t['history.placeholder']) {
+                    placeholder.textContent = t['history.placeholder'];
+                }
+            }
         }
 
         function updateLanguageButtons(customerLangCode) {
@@ -1442,6 +1576,7 @@
             document.getElementById('comm-language').textContent = testCase.language;
             document.getElementById('selected-service-text').textContent = ` ${testCase.serviceName} (${testCase.tn})`;
 
+            resetHistoryCard();
             updateLanguageButtons(testCase.languageCode);
             translatePage(currentDashboardLang);
 
@@ -1534,7 +1669,59 @@
 
         function requestVideoInterpreter() {
             const testCase = testCases[currentTestCase];
-            alert(`🧏 ASL Interpereter Requested:\n\nCustomer: ${testCase.name}\nPreferred Language: ${testCase.language}\nSelection Method: ${testCase.languageMethod}\n\nA video ASL interpreter will join shortly.`);
+            alert(`🧏 ASL Interpreter Requested:\n\nCustomer: ${testCase.name}\nPreferred Language: ${testCase.language}\nSelection Method: ${testCase.languageMethod}\n\nA video ASL interpreter will join shortly.`);
+        }
+
+        function setHistoryPlaceholder() {
+            const container = document.getElementById('history-content');
+            if (container) {
+                container.innerHTML = `<p id="history-placeholder">${t('history.placeholder')}</p>`;
+            }
+        }
+
+        function resetHistoryCard() {
+            lastHistoryInsights = null;
+            setHistoryPlaceholder();
+        }
+
+        function renderHistoryInsights(insights, skipStateUpdate = false) {
+            if (!insights) return;
+            if (!skipStateUpdate) {
+                lastHistoryInsights = insights;
+            }
+
+            const container = document.getElementById('history-content');
+            if (!container) return;
+
+            const sections = [
+                { title: t('history.section.trends'), items: insights.trends || [] },
+                { title: t('history.section.hotspots'), items: insights.hotspots || [] },
+                { title: t('history.section.chronic'), items: insights.chronic || [] }
+            ];
+
+            const sectionHtml = sections.map(section => `
+                <div class="history-section">
+                    <h3>${section.title}</h3>
+                    <ul>
+                        ${section.items.map(item => `
+                            <li>
+                                <span class="history-badge">${item.badge}</span>
+                                ${item.detail}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                ${sectionHtml}
+                <div class="history-meta">${t('history.lastUpdated')}: ${insights.lastUpdated}</div>
+            `;
+        }
+
+        function analyzeHistory() {
+            const insights = historyInsights[currentTestCase] || historyInsights.default;
+            renderHistoryInsights(insights);
         }
 
         document.querySelectorAll('.modal').forEach(modal => {
