@@ -1,16 +1,313 @@
 const express = require('express');
 const path = require('path');
+const { testConnection, query } = require('./db');
+
 const app = express();
+
+// Middleware
+app.use(express.json()); // Parse JSON bodies
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+
+// CORS middleware (in case needed)
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 // Serve static files from the current directory
 app.use(express.static(__dirname));
 
 // Serve index.html for the root route
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'agentConsole.html'));
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
+// Database test route
+app.get('/api/test-db', async (req, res) => {
+  try {
+    const result = await query('SELECT NOW() as current_time, version() as version');
+    res.json({
+      success: true,
+      message: 'Database connection successful',
+      data: result.rows[0]
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Database connection failed',
+      error: error.message
+    });
+  }
+});
+
+// Get all test cases (customers formatted for test cases)
+app.get('/api/test-cases', async (req, res) => {
+  try {
+    const { limit = 50, offset = 0 } = req.query;
+    
+    // Fetch customers with their support tickets/issues
+    const customers = await query(`
+      SELECT 
+        c.customer_id,
+        c.customer_name,
+        c.contact_phone,
+        c.account_status,
+        c.service_plan,
+        c.location,
+        c.subscription_tier,
+        COALESCE(
+          (SELECT COUNT(*) FROM support_tickets st 
+           WHERE st.customer_id = c.customer_id 
+           AND st.status != 'resolved'), 
+          0
+        ) as open_tickets,
+        (SELECT ticket_id FROM support_tickets st 
+         WHERE st.customer_id = c.customer_id 
+         ORDER BY st.timestamp_created DESC LIMIT 1) as latest_ticket_id,
+        (SELECT symptom_description FROM support_tickets st 
+         WHERE st.customer_id = c.customer_id 
+         ORDER BY st.timestamp_created DESC LIMIT 1) as latest_issue
+      FROM customers c
+      WHERE c.account_status IN ('Active', 'Pending')
+      ORDER BY c.customer_id
+      LIMIT $1 OFFSET $2
+    `, [parseInt(limit), parseInt(offset)]);
+    
+    // Format customers as test cases
+    const testCases = customers.rows.map((customer, index) => {
+      // Generate test_case_id
+      const testCaseId = `db-${customer.customer_id.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+      
+      // Map service plan to service type
+      let serviceType = 'internet';
+      let serviceName = 'Internet';
+      if (customer.service_plan?.toLowerCase().includes('phone')) {
+        serviceType = 'phone';
+        serviceName = 'Home Phone';
+      } else if (customer.service_plan?.toLowerCase().includes('tv')) {
+        serviceType = 'tv';
+        serviceName = 'TV Service';
+      } else if (customer.service_plan?.toLowerCase().includes('mobile')) {
+        serviceType = 'mobile';
+        serviceName = 'Mobile';
+      }
+      
+      // Generate phone number if missing
+      const phoneNumber = customer.contact_phone || `555-${String(index + 100).padStart(3, '0')}-${String(index + 2000).padStart(4, '0')}`;
+      
+      // Generate account number
+      const accountNumber = customer.customer_id || `FTR-${String(index + 1000000)}-01`;
+      
+      // Default language (can be enhanced later)
+      const languageCode = 'en';
+      const language = '🇺🇸 English';
+      const languageMethod = 'Said "English"';
+      
+      // Issue description
+      const issue = customer.latest_issue || 'Service interruption';
+      
+      return {
+        testCaseId,
+        name: customer.customer_name,
+        tn: phoneNumber,
+        account: accountNumber,
+        language,
+        languageCode,
+        languageMethod,
+        service: serviceType,
+        serviceName,
+        issue,
+        customerId: customer.customer_id,
+        location: customer.location,
+        servicePlan: customer.service_plan,
+        openTickets: parseInt(customer.open_tickets) || 0,
+        // Default messages (can be enhanced with actual conversation history)
+        messages: [
+          { 
+            type: 'ai', 
+            text: 'Welcome to Frontier. How may I help you today?', 
+            translation: 'Welcome to Frontier. How may I help you today?' 
+          },
+          { 
+            type: 'customer', 
+            text: `I'm having issues with my ${serviceName.toLowerCase()} service.`, 
+            translation: `I'm having issues with my ${serviceName.toLowerCase()} service.` 
+          }
+        ]
+      };
+    });
+    
+    res.json({
+      success: true,
+      testCases,
+      total: customers.rowCount,
+      limit: parseInt(limit),
+      offset: parseInt(offset)
+    });
+  } catch (error) {
+    console.error('Error fetching test cases:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch test cases',
+      error: error.message
+    });
+  }
+});
+
+// Get a specific test case by customer ID
+app.get('/api/test-cases/:customerId', async (req, res) => {
+  try {
+    const { customerId } = req.params;
+    
+    const customer = await query(`
+      SELECT 
+        c.*,
+        (SELECT ticket_id FROM support_tickets st 
+         WHERE st.customer_id = c.customer_id 
+         ORDER BY st.timestamp_created DESC LIMIT 1) as latest_ticket_id,
+        (SELECT symptom_description FROM support_tickets st 
+         WHERE st.customer_id = c.customer_id 
+         ORDER BY st.timestamp_created DESC LIMIT 1) as latest_issue
+      FROM customers c
+      WHERE c.customer_id = $1
+    `, [customerId]);
+    
+    if (customer.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Customer not found'
+      });
+    }
+    
+    const c = customer.rows[0];
+    const testCaseId = `db-${c.customer_id.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+    
+    // Map service plan to service type
+    let serviceType = 'internet';
+    let serviceName = 'Internet';
+    if (c.service_plan?.toLowerCase().includes('phone')) {
+      serviceType = 'phone';
+      serviceName = 'Home Phone';
+    } else if (c.service_plan?.toLowerCase().includes('tv')) {
+      serviceType = 'tv';
+      serviceName = 'TV Service';
+    }
+    
+    const phoneNumber = c.contact_phone || '555-000-0000';
+    const accountNumber = c.customer_id || 'FTR-0000000-00';
+    
+    const testCase = {
+      testCaseId,
+      name: c.customer_name,
+      tn: phoneNumber,
+      account: accountNumber,
+      language: '🇺🇸 English',
+      languageCode: 'en',
+      languageMethod: 'Said "English"',
+      service: serviceType,
+      serviceName,
+      issue: c.latest_issue || 'Service interruption',
+      customerId: c.customer_id,
+      location: c.location,
+      servicePlan: c.service_plan,
+      messages: [
+        { 
+          type: 'ai', 
+          text: 'Welcome to Frontier. How may I help you today?', 
+          translation: 'Welcome to Frontier. How may I help you today?' 
+        },
+        { 
+          type: 'customer', 
+          text: `I'm having issues with my ${serviceName.toLowerCase()} service.`, 
+          translation: `I'm having issues with my ${serviceName.toLowerCase()} service.` 
+        }
+      ]
+    };
+    
+    res.json({
+      success: true,
+      testCase
+    });
+  } catch (error) {
+    console.error('Error fetching test case:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch test case',
+      error: error.message
+    });
+  }
+});
+
+// Get customer service history for trend analysis
+app.get('/api/customers/:customerId/history', async (req, res) => {
+  try {
+    const { customerId } = req.params;
+    
+    const history = await query(`
+      SELECT 
+        ticket_id,
+        severity,
+        symptom_description,
+        description,
+        status,
+        timestamp_created,
+        resolved_at,
+        resolution_notes
+      FROM support_tickets
+      WHERE customer_id = $1
+      ORDER BY timestamp_created DESC
+      LIMIT 50
+    `, [customerId]);
+    
+    res.json({
+      success: true,
+      history: history.rows
+    });
+  } catch (error) {
+    console.error('Error fetching customer history:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch customer history',
+      error: error.message
+    });
+  }
+});
+
+// Example route to query database (for testing)
+app.get('/api/query', async (req, res) => {
+  try {
+    const { sql } = req.query;
+    if (!sql) {
+      return res.status(400).json({
+        success: false,
+        message: 'SQL query parameter is required'
+      });
+    }
+    const result = await query(sql);
+    res.json({
+      success: true,
+      rows: result.rows,
+      rowCount: result.rowCount
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Query execution failed',
+      error: error.message
+    });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+
+// Test database connection on startup
+app.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`);
+  console.log('Testing database connection...');
+  await testConnection();
 });

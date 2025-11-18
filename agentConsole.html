@@ -632,6 +632,34 @@
             font-weight: 600;
         }
 
+        /* Focus Styling for Accessibility */
+        button:focus,
+        select:focus,
+        .service-card:focus,
+        .log-entry:focus {
+            outline: 3px solid #FF0000;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 2px white, 0 0 0 5px #FF0000;
+        }
+
+        .lang-btn:focus {
+            outline: 3px solid white;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 2px #FF0000, 0 0 0 5px white;
+        }
+
+        /* Make service cards focusable */
+        .service-card {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .service-card:hover,
+        .service-card:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,0,0,0.2);
+        }
+
         /* Footer */
         .footer {
             background: #000;
@@ -659,7 +687,7 @@
             <p id="header-subtitle">Real-Time AI Network Diagnostics System</p>
         </div>
         <div class="header-language-toggle" id="language-toggle-container">
-            <button class="lang-btn active" onclick="switchDashboardLanguage('en')">
+            <button class="lang-btn active" onclick="switchDashboardLanguage('en')" tabindex="1">
                 🇺🇸 English
             </button>
         </div>
@@ -668,7 +696,7 @@
     <!-- Test Case Selector -->
     <div class="test-case-bar">
         <label id="test-label">🧪 Select Test Case:</label>
-        <select id="test-case-selector">
+        <select id="test-case-selector" tabindex="2">
             <option value="spanish-phone">Spanish Customer - Phone Issue</option>
             <option value="french-internet">French Customer - Internet Issue</option>
             <option value="german-tv">German Customer - TV Issue</option>
@@ -682,14 +710,15 @@
             <option value="english-all-services">English Customer - Internet Issue</option>
             <option value="hearing-impaired">Deaf/Hard of Hearing Customer (TTY)</option>
         </select>
-        <button onclick="loadTestCase()" id="load-btn">Load Test Case</button>
-        <button onclick="randomTestCase()" id="random-btn">Random Test</button>
-        <button onclick="showLanguagePrompt()" style="background: #3B82F6;">View Language Prompt</button>
+        <button onclick="loadTestCase()" id="load-btn" tabindex="3">Load Test Case</button>
+        <button onclick="randomTestCase()" id="random-btn" tabindex="4">Random Test</button>
+        <button onclick="loadFromDatabase()" id="load-db-btn" style="background: #10B981;" tabindex="5">Load from Database</button>
+        <button onclick="showLanguagePrompt()" style="background: #3B82F6;" tabindex="6">View Language Prompt</button>
     </div>
 
     <!-- Agent Menu -->
     <div class="agent-menu">
-        <button class="agent-button">
+        <button class="agent-button" tabindex="6">
             <span>👤</span>
             <span id="agent-text">Agent: Sarah Johnson</span>
         </button>
@@ -757,25 +786,25 @@
             </div>
             
             <div class="services-grid" id="services-grid">
-                <div class="service-card active" data-service="phone">
+                <div class="service-card active" data-service="phone" tabindex="7" role="button" aria-label="Select Home Phone service">
                     <div class="service-icon">📞</div>
                     <div class="service-name" id="service-phone-name">Home Phone</div>
                     <div class="service-status" id="service-phone-status">Active • 555-234-5678</div>
                 </div>
 
-                <div class="service-card" data-service="internet">
+                <div class="service-card" data-service="internet" tabindex="8" role="button" aria-label="Select Internet service">
                     <div class="service-icon">🌐</div>
                     <div class="service-name">Internet</div>
                     <div class="service-status" id="service-internet-status">Active • 500 Mbps</div>
                 </div>
 
-                <div class="service-card" data-service="tv">
+                <div class="service-card" data-service="tv" tabindex="9" role="button" aria-label="Select TV service">
                     <div class="service-icon">📺</div>
                     <div class="service-name" id="service-tv-name">TV Service</div>
                     <div class="service-status" id="service-tv-status">Active • Premium Package</div>
                 </div>
 
-                <div class="service-card" data-service="mobile">
+                <div class="service-card" data-service="mobile" tabindex="10" role="button" aria-label="Select Mobile service">
                     <div class="service-icon">📱</div>
                     <div class="service-name" id="service-mobile-name">Mobile</div>
                     <div class="service-status" id="service-mobile-status">Active • 2 Lines</div>
@@ -796,19 +825,19 @@
             </div>
             
             <div class="button-grid">
-                <button class="btn btn-primary" onclick="startDiagnostics()">
+                <button class="btn btn-primary" onclick="startDiagnostics()" tabindex="11">
                     <span id="btn-start">✓ Start Diagnostics</span>
                 </button>
-                <button class="btn btn-secondary">
+                <button class="btn btn-secondary" tabindex="12">
                     <span id="btn-account">👤 View Full Account</span>
                 </button>
-                <button class="btn btn-outline" onclick="analyzeHistory()">
+                <button class="btn btn-outline" onclick="analyzeHistory()" tabindex="13">
                     <span id="btn-history">📋 Analyze Service History</span>
                 </button>
-                <button class="btn btn-outline">
+                <button class="btn btn-outline" tabindex="14">
                     <span id="btn-escalate">📤 Escalate to Specialist</span>
                 </button>
-                <button class="btn btn-outline" onclick="requestVideoInterpreter()">
+                <button class="btn btn-outline" onclick="requestVideoInterpreter()" tabindex="15">
                     <span id="btn-interpreter">🧏 Request an ASL Interpreter Video Call</span>
                 </button>
             </div>
@@ -866,9 +895,14 @@
                     <!-- Will be populated by test case -->
                 </div>
 
-                <button class="view-transcript-btn" onclick="showFullTranscript()">
-                    <span id="btn-transcript">📄 View Full Transcript</span>
-                </button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="view-transcript-btn" onclick="showFullTranscript()" style="flex: 1;">
+                        <span id="btn-transcript">📄 View Full Transcript</span>
+                    </button>
+                    <button class="view-transcript-btn" onclick="refreshDiagnosticData()" style="flex: 1; background: #3B82F6;">
+                        🔄 Refresh Diagnostics
+                    </button>
+                </div>
             </div>
 
         </div>
@@ -1392,6 +1426,8 @@
 
         let currentTestCase = 'spanish-phone';
         let currentDashboardLang = 'en';
+        let databaseTestCases = {}; // Store test cases loaded from database
+        let useDatabase = false; // Toggle between hardcoded and database test cases
         let lastHistoryInsights = null;
 
         const historyInsights = {
@@ -1553,18 +1589,148 @@
             updateLanguageButtons(testCase.languageCode);
         }
 
+        // Load test cases from database
+        async function loadFromDatabase() {
+            const btn = document.getElementById('load-db-btn');
+            btn.disabled = true;
+            btn.textContent = 'Loading...';
+            
+            try {
+                // Use full URL if page is opened via file://, otherwise use relative path
+                const apiUrl = window.location.protocol === 'file:' 
+                    ? 'http://localhost:3000/api/test-cases?limit=10'
+                    : '/api/test-cases?limit=10';
+                
+                console.log('Fetching from:', apiUrl);
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Received data:', data);
+                
+                if (data.success && data.testCases.length > 0) {
+                    // Convert array to object format
+                    databaseTestCases = {};
+                    data.testCases.forEach(tc => {
+                        databaseTestCases[tc.testCaseId] = {
+                            name: tc.name,
+                            tn: tc.tn,
+                            account: tc.account,
+                            language: tc.language,
+                            languageCode: tc.languageCode,
+                            languageMethod: tc.languageMethod,
+                            service: tc.service,
+                            serviceName: tc.serviceName,
+                            issue: tc.issue,
+                            messages: tc.messages,
+                            customerId: tc.customerId,
+                            location: tc.location,
+                            servicePlan: tc.servicePlan,
+                            openTickets: tc.openTickets
+                        };
+                    });
+                    
+                    // Update selector with database test cases
+                    updateTestCaseSelector();
+                    
+                    // Switch to first database test case
+                    const firstKey = Object.keys(databaseTestCases)[0];
+                    currentTestCase = firstKey;
+                    useDatabase = true;
+                    document.getElementById('test-case-selector').value = firstKey;
+                    applyTestCase(databaseTestCases[firstKey]);
+                    
+                    alert(`✅ Loaded ${data.testCases.length} test cases from database!`);
+                } else {
+                    alert('No test cases found in database.');
+                }
+            } catch (error) {
+                console.error('Error loading from database:', error);
+                console.error('Error details:', {
+                    message: error.message,
+                    stack: error.stack,
+                    url: window.location.href
+                });
+                
+                let errorMsg = 'Failed to load test cases from database: ' + error.message;
+                
+                // Provide helpful error messages
+                if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                    errorMsg += '\n\nPlease make sure:\n1. The server is running (node server.js)\n2. You are accessing the page via http://localhost:3000\n3. The server is not blocked by firewall';
+                }
+                
+                alert(errorMsg);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Load from Database';
+            }
+        }
+        
+        // Update test case selector dropdown
+        function updateTestCaseSelector() {
+            const selector = document.getElementById('test-case-selector');
+            const currentValue = selector.value;
+            
+            // Clear existing options
+            selector.innerHTML = '';
+            
+            // Add hardcoded test cases
+            Object.keys(testCases).forEach(key => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = `${testCases[key].name} - ${testCases[key].serviceName} (${testCases[key].issue})`;
+                selector.appendChild(option);
+            });
+            
+            // Add database test cases
+            Object.keys(databaseTestCases).forEach(key => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = `[DB] ${databaseTestCases[key].name} - ${databaseTestCases[key].serviceName} (${databaseTestCases[key].issue})`;
+                option.style.color = '#10B981';
+                selector.appendChild(option);
+            });
+            
+            // Restore previous selection if it still exists
+            if (currentValue && (testCases[currentValue] || databaseTestCases[currentValue])) {
+                selector.value = currentValue;
+            }
+        }
+
         function loadTestCase() {
             const selector = document.getElementById('test-case-selector');
             currentTestCase = selector.value;
-            applyTestCase(testCases[currentTestCase]);
+            
+            // Determine which test case source to use
+            if (databaseTestCases[currentTestCase]) {
+                useDatabase = true;
+                applyTestCase(databaseTestCases[currentTestCase]);
+            } else if (testCases[currentTestCase]) {
+                useDatabase = false;
+                applyTestCase(testCases[currentTestCase]);
+            } else {
+                console.error('Test case not found:', currentTestCase);
+            }
         }
 
         function randomTestCase() {
-            const keys = Object.keys(testCases);
+            // Combine both test case sources
+            const allTestCases = { ...testCases, ...databaseTestCases };
+            const keys = Object.keys(allTestCases);
+            
+            if (keys.length === 0) {
+                alert('No test cases available. Load from database first.');
+                return;
+            }
+            
             const randomKey = keys[Math.floor(Math.random() * keys.length)];
             document.getElementById('test-case-selector').value = randomKey;
             currentTestCase = randomKey;
-            applyTestCase(testCases[randomKey]);
+            useDatabase = !!databaseTestCases[randomKey];
+            applyTestCase(allTestCases[randomKey]);
         }
 
         function applyTestCase(testCase) {
@@ -1719,9 +1885,74 @@
             `;
         }
 
-        function analyzeHistory() {
-            const insights = historyInsights[currentTestCase] || historyInsights.default;
-            renderHistoryInsights(insights);
+        async function analyzeHistory() {
+            // If using database test case, fetch real history
+            if (useDatabase && databaseTestCases[currentTestCase]?.customerId) {
+                try {
+                    const customerId = databaseTestCases[currentTestCase].customerId;
+                    const response = await fetch(`/api/customers/${customerId}/history`);
+                    const data = await response.json();
+                    
+                    if (data.success && data.history.length > 0) {
+                        // Format history data for display
+                        const trends = [];
+                        const hotspots = [];
+                        const chronic = [];
+                        
+                        // Analyze history
+                        const issueCounts = {};
+                        data.history.forEach(ticket => {
+                            const issue = ticket.symptom_description || ticket.description || 'Unknown issue';
+                            issueCounts[issue] = (issueCounts[issue] || 0) + 1;
+                        });
+                        
+                        // Identify trends (recurring issues)
+                        Object.entries(issueCounts).forEach(([issue, count]) => {
+                            if (count >= 3) {
+                                chronic.push({
+                                    badge: `⚠️ ${count}x`,
+                                    detail: `${count} reports: ${issue.substring(0, 60)}${issue.length > 60 ? '...' : ''}`
+                                });
+                            } else if (count >= 2) {
+                                trends.push({
+                                    badge: `📊 ${count}x`,
+                                    detail: `${count} reports: ${issue.substring(0, 60)}${issue.length > 60 ? '...' : ''}`
+                                });
+                            }
+                        });
+                        
+                        // Recent issues as hotspots
+                        data.history.slice(0, 5).forEach(ticket => {
+                            hotspots.push({
+                                badge: ticket.severity || 'MEDIUM',
+                                detail: `${ticket.symptom_description || ticket.description || 'Issue'} - ${new Date(ticket.timestamp_created).toLocaleDateString()}`
+                            });
+                        });
+                        
+                        const insights = {
+                            lastUpdated: new Date().toLocaleString(),
+                            trends: trends.length > 0 ? trends : [{ badge: 'None', detail: 'No recurring issues detected' }],
+                            hotspots: hotspots.length > 0 ? hotspots : [{ badge: 'None', detail: 'No recent trouble spots' }],
+                            chronic: chronic.length > 0 ? chronic : [{ badge: 'None', detail: 'No chronic complaints identified' }]
+                        };
+                        
+                        renderHistoryInsights(insights);
+                    } else {
+                        // Fallback to default if no history
+                        const insights = historyInsights.default;
+                        renderHistoryInsights(insights);
+                    }
+                } catch (error) {
+                    console.error('Error fetching history:', error);
+                    // Fallback to default
+                    const insights = historyInsights.default;
+                    renderHistoryInsights(insights);
+                }
+            } else {
+                // Use hardcoded insights for hardcoded test cases
+                const insights = historyInsights[currentTestCase] || historyInsights.default;
+                renderHistoryInsights(insights);
+            }
         }
 
         document.querySelectorAll('.modal').forEach(modal => {
@@ -1732,9 +1963,246 @@
             });
         });
 
+        // Keyboard Navigation Handler
+        function handleKeyboardNavigation(event) {
+            // Page Up/Down for scrolling
+            if (event.key === 'PageUp') {
+                event.preventDefault();
+                window.scrollBy(0, -window.innerHeight * 0.8);
+            } else if (event.key === 'PageDown') {
+                event.preventDefault();
+                window.scrollBy(0, window.innerHeight * 0.8);
+            }
+            // Home/End for top/bottom
+            else if (event.key === 'Home' && event.ctrlKey) {
+                event.preventDefault();
+                window.scrollTo(0, 0);
+            } else if (event.key === 'End' && event.ctrlKey) {
+                event.preventDefault();
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+            // Arrow keys for section navigation
+            else if (event.key === 'ArrowDown' && event.altKey) {
+                event.preventDefault();
+                scrollToNextSection();
+            } else if (event.key === 'ArrowUp' && event.altKey) {
+                event.preventDefault();
+                scrollToPreviousSection();
+            }
+        }
+
+        // Section navigation helpers
+        function scrollToNextSection() {
+            const sections = document.querySelectorAll('.card');
+            const currentScroll = window.scrollY;
+            for (let section of sections) {
+                if (section.offsetTop > currentScroll + 100) {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    break;
+                }
+            }
+        }
+
+        function scrollToPreviousSection() {
+            const sections = Array.from(document.querySelectorAll('.card')).reverse();
+            const currentScroll = window.scrollY;
+            for (let section of sections) {
+                if (section.offsetTop < currentScroll - 100) {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    break;
+                }
+            }
+        }
+
+        // Add click handlers for service cards
+        function addServiceCardHandlers() {
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    selectServiceCard(this);
+                });
+                card.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        selectServiceCard(this);
+                    }
+                });
+            });
+        }
+
+        function selectServiceCard(card) {
+            document.querySelectorAll('.service-card').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+        }
+
+        // Diagnostic Integration Functions
+        function loadCustomerDiagnostics() {
+            try {
+                const diagnosticData = localStorage.getItem('customerDiagnostics');
+                if (diagnosticData) {
+                    const data = JSON.parse(diagnosticData);
+                    if (data.diagnosticLog && data.diagnosticLog.length > 0) {
+                        displayDiagnosticResults(data);
+                        return data;
+                    }
+                }
+            } catch (error) {
+                console.log('No diagnostic data available');
+            }
+            return null;
+        }
+        
+        function displayDiagnosticResults(diagnosticData) {
+            const logContainer = document.getElementById('communication-log');
+            
+            // Add diagnostic header
+            const diagnosticHeader = document.createElement('div');
+            diagnosticHeader.className = 'log-entry received';
+            diagnosticHeader.innerHTML = `
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; font-size: 13px; color: #3B82F6;">
+                        🔧 Customer Diagnostic Results - ${diagnosticData.status.toUpperCase()}
+                    </div>
+                    <div class="log-time">${new Date(diagnosticData.timestamp).toLocaleString()} • Click to view details</div>
+                </div>
+            `;
+            diagnosticHeader.onclick = () => showDiagnosticModal(diagnosticData);
+            logContainer.appendChild(diagnosticHeader);
+            
+            // Add each diagnostic exchange
+            diagnosticData.diagnosticLog.forEach((entry, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = `log-entry ${entry.type === 'diagnostic-question' ? 'sent' : 'received'}`;
+                logEntry.onclick = () => showMessageDetail(index, diagnosticData.diagnosticLog);
+                
+                const isQuestion = entry.type === 'diagnostic-question';
+                const prefix = isQuestion ? '🤖 System:' : '💬 Customer:';
+                const truncatedText = entry.text.length > 60 ? entry.text.substring(0, 60) + '...' : entry.text;
+                
+                logEntry.innerHTML = `
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 13px;">
+                            ${prefix} ${truncatedText}
+                        </div>
+                        <div class="log-time">${new Date().toLocaleString()} • Click to view</div>
+                    </div>
+                `;
+                logContainer.appendChild(logEntry);
+            });
+        }
+        
+        function showDiagnosticModal(diagnosticData) {
+            const modal = document.getElementById('transcript-modal');
+            const body = document.getElementById('transcript-body');
+            
+            let content = `
+                <h4 style="margin-bottom: 15px; color: #3B82F6;">🔧 Customer Self-Diagnostic Results</h4>
+                <div style="background: #f0f7ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #3B82F6;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+                        <div><strong>Service:</strong> ${diagnosticData.serviceType?.toUpperCase() || 'N/A'}</div>
+                        <div><strong>Issue Category:</strong> ${diagnosticData.issueCategory?.replace('-', ' ').toUpperCase() || 'N/A'}</div>
+                        <div><strong>Status:</strong> ${diagnosticData.status?.toUpperCase()}</div>
+                        <div><strong>Completed:</strong> ${new Date(diagnosticData.timestamp).toLocaleString()}</div>
+                    </div>
+                </div>
+            `;
+            
+            if (diagnosticData.recommendations && diagnosticData.recommendations.length > 0) {
+                content += `<h5 style="color: #059669; margin: 20px 0 10px 0;">System Recommendations:</h5>`;
+                diagnosticData.recommendations.forEach(rec => {
+                    content += `
+                        <div style="background: #f0fdf4; border: 1px solid #10b981; border-radius: 8px; padding: 15px; margin: 10px 0;">
+                            <h6 style="color: #059669; margin-bottom: 8px;">${rec.title}</h6>
+                            <p style="color: #065f46; font-size: 13px; margin-bottom: 10px;">${rec.description}</p>
+                            ${rec.actions ? `<ul style="margin: 0; padding-left: 20px;">${rec.actions.map(action => `<li style="color: #065f46; font-size: 12px; margin: 2px 0;">${action}</li>`).join('')}</ul>` : ''}
+                        </div>
+                    `;
+                });
+            }
+            
+            content += `<h5 style="margin: 20px 0 15px 0;">Diagnostic Conversation:</h5>`;
+            
+            // Group questions and answers
+            let qaIndex = 0;
+            for (let i = 0; i < diagnosticData.diagnosticLog.length; i += 2) {
+                const question = diagnosticData.diagnosticLog[i];
+                const answer = diagnosticData.diagnosticLog[i + 1];
+                
+                if (question && answer) {
+                    qaIndex++;
+                    content += `
+                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; margin: 10px 0;">
+                            <div style="margin-bottom: 10px;">
+                                <strong style="color: #1e40af;">🤖 Question ${qaIndex}:</strong><br>
+                                <span style="color: #374151;">${question.text}</span>
+                            </div>
+                            <div>
+                                <strong style="color: #059669;">💬 Customer Response:</strong><br>
+                                <span style="color: #374151; background: #f9fafb; padding: 4px 8px; border-radius: 4px; display: inline-block;">${answer.text}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            body.innerHTML = content;
+            modal.classList.add('active');
+        }
+        
+        function checkForDiagnosticUpdates() {
+            const diagnosticData = loadCustomerDiagnostics();
+            if (diagnosticData && diagnosticData.status === 'complete') {
+                // Update status display
+                const statusMain = document.getElementById('status-main');
+                const statusSub = document.getElementById('status-sub');
+                
+                statusMain.textContent = '🔧 DIAGNOSTICS COMPLETE';
+                statusMain.className = 'diagnostic-status';
+                statusSub.textContent = `Customer completed self-diagnostic for ${diagnosticData.serviceType} service`;
+                
+                // Update selected service if available
+                if (diagnosticData.serviceType) {
+                    const serviceCards = document.querySelectorAll('.service-card');
+                    serviceCards.forEach(card => {
+                        card.classList.remove('active');
+                        if (card.dataset.service === diagnosticData.serviceType) {
+                            card.classList.add('active');
+                        }
+                    });
+                    
+                    const selectedServiceText = document.getElementById('selected-service-text');
+                    if (selectedServiceText) {
+                        selectedServiceText.textContent = ` ${diagnosticData.serviceType.charAt(0).toUpperCase() + diagnosticData.serviceType.slice(1)} Service (Diagnosed)`;
+                    }
+                }
+            }
+        }
+        
+        // Refresh diagnostic data button
+        function refreshDiagnosticData() {
+            const logContainer = document.getElementById('communication-log');
+            logContainer.innerHTML = '';
+            loadCustomerDiagnostics();
+            checkForDiagnosticUpdates();
+        }
+        
         window.addEventListener('load', () => {
             applyTestCase(testCases['spanish-phone']);
+            addServiceCardHandlers();
+            
+            // Load any existing diagnostic data
+            setTimeout(() => {
+                loadCustomerDiagnostics();
+                checkForDiagnosticUpdates();
+            }, 1000);
+            
+            // Check for updates every 30 seconds
+            setInterval(() => {
+                checkForDiagnosticUpdates();
+            }, 30000);
         });
+
+        // Add keyboard event listeners
+        document.addEventListener('keydown', handleKeyboardNavigation);
     </script>
 
 </body>

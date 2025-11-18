@@ -1,0 +1,129 @@
+FRONTIER AGENT DASHBOARD - APPLICATION SUMMARY
+==============================================
+
+FILE: agentConsole.html
+DESCRIPTION: A comprehensive customer service agent dashboard for Frontier Communications
+
+OVERVIEW
+--------
+This is a real-time AI-powered network diagnostics system designed to help customer service agents handle multilingual customer support cases. The dashboard provides a complete interface for managing customer interactions, running diagnostics, and resolving technical issues across multiple services.
+
+KEY FEATURES
+------------
+
+1. MULTILINGUAL SUPPORT
+   - 12 language options including English, Spanish, French, German, Portuguese, Italian, Chinese, Japanese, Korean, Hindi, and Arabic
+   - TTY/Text relay service for deaf/hard of hearing customers
+   - Voice recognition and keypad selection (press numbers 1-11 or 0 for TTY)
+   - Real-time language switching for agent interface
+   - Customer language preference tracking
+
+2. TEST CASE SYSTEM
+   - Pre-configured test scenarios for different customer types
+   - Random test case generation
+   - Multiple service issue types (Phone, Internet, TV, Mobile)
+   - Various customer demographics and languages
+
+3. CUSTOMER INFORMATION MANAGEMENT
+   - Phone number verification and confirmation
+   - Account number tracking
+   - Customer name and language preference display
+   - Issue type identification and categorization
+
+4. SERVICE SELECTION INTERFACE
+   - Visual service cards for Phone, Internet, TV, and Mobile
+   - Interactive service selection with visual feedback
+   - Service status display (Active/Inactive, specifications)
+   - Customer-selected service highlighting
+
+5. DIAGNOSTIC CAPABILITIES
+   - Real-time diagnostic status monitoring
+   - Service-specific diagnostic workflows
+   - Progress tracking through diagnostic stages
+   - Auto-correction and resolution step guidance
+
+6. COMMUNICATION LOGGING
+   - Complete conversation transcript capture
+   - Bilingual message display (original + English translation)
+   - Communication timeline with timestamps
+   - Modal view for detailed message inspection
+
+7. QUICK ACTIONS TOOLBAR
+   - Start Diagnostics button
+   - View Full Account access
+   - Service History Analysis
+   - Escalate to Specialist option
+   - Request ASL Interpreter Video Call
+
+8. SERVICE HISTORY INSIGHTS
+   - Problem trend analysis
+   - Geographic hotspot identification
+   - Chronic complaint tracking
+   - Historical data correlation with current issues
+
+9. WORKFLOW MANAGEMENT
+   - Step-by-step process guidance
+   - Progress tracking through service stages
+   - Completed actions checklist
+   - Case priority and status monitoring
+
+10. ACCESSIBILITY FEATURES
+    - Full keyboard navigation support
+    - Tab order optimization (tabindex 1-15)
+    - High-contrast focus indicators
+    - ARIA labels for screen readers
+    - Keyboard shortcuts:
+      * Page Up/Down: Scroll by viewport
+      * Ctrl+Home/End: Jump to top/bottom
+      * Alt+Arrow Keys: Navigate between sections
+      * Enter/Space: Activate focused elements
+    - TTY support for hearing-impaired customers
+
+11. RESPONSIVE DESIGN
+    - Mobile-friendly layout
+    - Adaptive grid system
+    - Touch-friendly interface elements
+    - Cross-browser compatibility
+
+TECHNICAL SPECIFICATIONS
+------------------------
+- Pure HTML/CSS/JavaScript implementation
+- No external dependencies
+- Responsive CSS Grid and Flexbox layout
+- Modern ES6+ JavaScript features
+- Event-driven architecture
+- Modal dialog system
+- Real-time status updates
+- Translation system with fallbacks
+
+CUSTOMER SERVICE WORKFLOW
+-------------------------
+1. Customer calls and selects language preference
+2. Agent verifies customer phone number and account
+3. System displays customer services and account information
+4. Customer identifies problematic service
+5. Agent runs diagnostics on selected service
+6. System provides resolution steps or escalation options
+7. Complete interaction logging and case closure
+
+ACCESSIBILITY COMPLIANCE
+------------------------
+- WCAG 2.1 compliant keyboard navigation
+- Screen reader compatible
+- High contrast focus indicators
+- TTY/Text relay service integration
+- Alternative input methods supported
+
+SUPPORTED USE CASES
+------------------
+- Phone service issues (no dial tone, static, poor quality)
+- Internet connectivity problems (slow speeds, outages, drops)
+- TV service troubles (no signal, poor picture quality)
+- Mobile service issues (no signal, data problems)
+- Multilingual customer support scenarios
+- Hearing accessibility requirements (TTY support)
+- Service history analysis and trend identification
+- Technical diagnostic workflows
+- Customer escalation processes
+
+This application serves as a comprehensive customer service tool that combines modern web technologies with accessibility best practices to provide an efficient, multilingual, and inclusive customer support experience.

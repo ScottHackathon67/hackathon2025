@@ -1,0 +1,732 @@
+═══════════════════════════════════════════════════════════════════════════════
+                          FRONTIER ISP CUSTOMER SERVICE
+                        COMPREHENSIVE DIAGNOSTIC QUESTION TREE
+═══════════════════════════════════════════════════════════════════════════════
+
+VERSION: 1.0
+PURPOSE: Systematic troubleshooting guide for ISP customer service agents
+SCOPE: Internet, Phone, TV, Mobile services
+LAST UPDATED: 2025-11-18
+
+═══════════════════════════════════════════════════════════════════════════════
+                               INITIAL TRIAGE
+═══════════════════════════════════════════════════════════════════════════════
+
+🔴 EMERGENCY SITUATIONS (Handle Immediately)
+═══════════════════════════════════════════
+→ "I have no phone service and this is a medical emergency"
+   ACTION: Transfer immediately to emergency services or local authorities
+   
+→ "My security system/medical alert isn't working"
+   ACTION: Priority escalation, immediate technician dispatch
+   
+→ "There's been an accident and emergency services can't reach me"
+   ACTION: Emergency protocol, escalate to supervisor immediately
+
+📞 INITIAL GREETING & VERIFICATION
+══════════════════════════════════
+1. "Thank you for calling Frontier. My name is [Agent Name]. How can I help you today?"
+
+2. ACCOUNT VERIFICATION:
+   → "May I have the phone number associated with your account?"
+   → "Can you confirm the name on the account?"
+   → "What's the service address?"
+   → "For security purposes, can you provide the last 4 digits of the SSN or account PIN?"
+
+3. INITIAL ISSUE IDENTIFICATION:
+   "What service are you experiencing issues with today?"
+   
+   OPTIONS:
+   A) Internet/WiFi → GO TO INTERNET DIAGNOSTICS
+   B) Phone Service → GO TO PHONE DIAGNOSTICS  
+   C) TV/Cable → GO TO TV DIAGNOSTICS
+   D) Mobile/Cellular → GO TO MOBILE DIAGNOSTICS
+   E) Multiple Services → GO TO MULTI-SERVICE DIAGNOSTICS
+   F) Billing/Account → GO TO BILLING SUPPORT
+   G) New Service/Installation → GO TO SALES/INSTALLATION
+
+═══════════════════════════════════════════════════════════════════════════════
+                            INTERNET SERVICE DIAGNOSTICS
+═══════════════════════════════════════════════════════════════════════════════
+
+🌐 INTERNET ISSUE TRIAGE
+═══════════════════════
+"Can you describe the internet issue you're experiencing?"
+
+PRIMARY CATEGORIES:
+A) No Internet Connection At All
+B) Slow Internet Speeds
+C) Intermittent/Dropping Connection  
+D) WiFi Issues
+E) Specific Website/Service Issues
+F) Email Issues
+
+═══════════════════════════════════════════════════════════════════════════════
+
+A) NO INTERNET CONNECTION AT ALL
+════════════════════════════════
+
+STEP 1: BASIC STATUS CHECK
+→ "When did you first notice the internet wasn't working?"
+→ "Are any lights showing on your modem/router?"
+→ "What color are the lights?" (Record: Power, Internet/Online, WiFi)
+→ "Have there been any power outages or weather issues in your area recently?"
+
+STEP 2: EQUIPMENT IDENTIFICATION
+→ "What equipment do you have? Can you describe the boxes/devices?"
+→ "Do you have a separate modem and router, or one combined unit?"
+→ "What's the model number?" (Usually on a sticker)
+→ "Are you connected via WiFi or ethernet cable?"
+
+STEP 3: POWER & CONNECTIONS
+→ "Is the power cord firmly plugged into the modem and wall outlet?"
+→ "Are all cables securely connected?"
+→ "Can you trace the cable from the wall to your modem?"
+→ "Is the coax/ethernet cable from the wall firmly connected?"
+
+STEP 4: BASIC REBOOT SEQUENCE
+→ "Let's try resetting your equipment. Unplug the power cord from your modem"
+→ "Wait 30 seconds"
+→ "Plug the modem back in and wait 2-3 minutes for it to fully boot up"
+→ "What lights do you see now?"
+
+EXPECTED RESULTS:
+✅ Power Light: Solid Green/Blue
+✅ Internet/Online Light: Solid Green/Blue  
+✅ WiFi Light: Solid Green/Blue (if applicable)
+
+IF LIGHTS ARE NORMAL:
+→ "Try connecting a device directly to the modem with an ethernet cable"
+→ "Can you access the internet now?"
+   YES: WiFi issue → GO TO WIFI DIAGNOSTICS
+   NO: Continue to device testing
+
+IF LIGHTS ARE ABNORMAL:
+→ Red/Orange Internet Light: "This indicates a signal issue. Let me check for outages in your area"
+→ CHECK SYSTEM: Area outages, signal issues, account status
+→ No lights at all: Possible power/equipment failure
+
+STEP 5: DEVICE TESTING
+→ "What device are you testing with?" (Computer, phone, tablet)
+→ "Try a different device if possible"
+→ "Can you try a different ethernet cable?"
+
+STEP 6: SIGNAL TESTING
+→ "I'm going to run some tests from our end"
+→ "I can see your modem is [online/offline]"
+→ "The signal levels show [normal/weak/no signal]"
+
+RESOLUTION PATHS:
+━━━━━━━━━━━━━━
+🔧 EQUIPMENT REPLACEMENT: "Your modem appears to be malfunctioning. We'll send a replacement"
+🛠️ TECHNICIAN DISPATCH: "There appears to be a line issue. I'm scheduling a technician"
+⚡ SERVICE RESTORATION: "There's an area outage. Estimated repair time is X hours"
+✅ ISSUE RESOLVED: "Great! Your internet should be working now"
+
+═══════════════════════════════════════════════════════════════════════════════
+
+B) SLOW INTERNET SPEEDS  
+═══════════════════════
+
+STEP 1: SPEED EXPECTATIONS
+→ "What internet package do you have?" (Verify in system)
+→ "What speeds are you experiencing vs. what you're expecting?"
+→ "Are you running a speed test? What website are you using?"
+→ "What time of day does this usually happen?"
+
+STEP 2: DEVICE & CONNECTION TYPE
+→ "What device are you testing on?"
+→ "Are you connected via WiFi or ethernet cable?"
+→ "How far are you from your router?"
+→ "How many devices are currently connected to your internet?"
+
+STEP 3: INTERFERENCE & USAGE
+→ "Is anyone streaming video, gaming, or downloading large files?"
+→ "Do you have any smart home devices, security cameras, or IoT devices?"
+→ "Are you using a VPN?"
+→ "What browser are you using?"
+
+STEP 4: DIRECT CONNECTION SPEED TEST
+→ "Let's test with a direct ethernet connection to your modem"
+→ "Disconnect the WiFi on your device first"
+→ "Go to speedtest.net or fast.com"
+→ "What speeds are you seeing now?"
+
+SPEED TEST ANALYSIS:
+━━━━━━━━━━━━━━━━━
+✅ Within 80% of plan speed: Normal performance
+⚠️ 50-80% of plan speed: Investigate further
+🔴 Below 50% of plan speed: Significant issue
+
+STEP 5: WIFI OPTIMIZATION (if WiFi is slow)
+→ "What's the WiFi network name you're connected to?"
+→ "Do you see multiple network names from your router?"
+→ "Try connecting to the 5GHz network (usually ends in _5G)"
+→ "Move closer to the router and test again"
+
+STEP 6: NETWORK CONGESTION
+→ "I'm checking the network utilization in your area"
+→ "There appears to be [normal/high] traffic on your node"
+→ "Let's schedule another test during off-peak hours"
+
+RESOLUTION PATHS:
+━━━━━━━━━━━━━━
+🏠 WIFI OPTIMIZATION: Router placement, channel optimization, equipment upgrade
+📶 SIGNAL ENHANCEMENT: Line conditioning, signal booster, service upgrade
+🔧 EQUIPMENT UPGRADE: Newer modem/router with better capabilities
+🛠️ LINE INVESTIGATION: Technician to check for line issues
+📈 PLAN UPGRADE: Higher speed package recommendation
+
+═══════════════════════════════════════════════════════════════════════════════
+
+C) INTERMITTENT/DROPPING CONNECTION
+════════════════════════════════════
+
+STEP 1: PATTERN IDENTIFICATION
+→ "How often does your internet disconnect?"
+→ "How long do the outages typically last?"
+→ "Does it happen at specific times of day?"
+→ "Does it affect all devices or just specific ones?"
+→ "Do you have to restart your equipment each time?"
+
+STEP 2: SYMPTOM ANALYSIS
+→ "What exactly happens when it drops out?"
+   - Complete loss of internet
+   - WiFi disconnects but ethernet works
+   - Slow down before disconnecting
+   - Browser times out but other apps work
+
+STEP 3: EQUIPMENT BEHAVIOR
+→ "What do the lights on your modem do when this happens?"
+→ "Does the internet light go off or change color?"
+→ "Does your WiFi network disappear from your device list?"
+
+STEP 4: ENVIRONMENTAL FACTORS
+→ "Have you noticed this correlating with:"
+   - Weather (rain, wind, temperature changes)
+   - High usage times (evenings, weekends)
+   - When appliances turn on (microwave, washing machine)
+   - After power outages or surges
+
+STEP 5: HISTORICAL ANALYSIS
+→ "Let me check your service history"
+→ "I can see [X] disconnections in the past week"
+→ "The pattern suggests [line issues/equipment problems/network congestion]"
+
+STEP 6: CONNECTION STABILITY TEST
+→ "I'm going to ping your modem continuously for 5 minutes"
+→ "Please don't use the internet during this test"
+→ RESULTS: "I see [X]% packet loss and [Y]ms average response time"
+
+RESOLUTION PATHS:
+━━━━━━━━━━━━━━
+🔧 LINE REPAIR: "Signal instability detected, scheduling technician"
+📶 SIGNAL CONDITIONING: "Installing line filters/amplifiers"  
+🏠 ENVIRONMENTAL: "Relocating equipment away from interference"
+⚡ POWER ISSUES: "UPS installation recommendation"
+📈 EQUIPMENT REPLACEMENT: "Modem showing instability, sending replacement"
+
+═══════════════════════════════════════════════════════════════════════════════
+
+D) WIFI ISSUES
+══════════════
+
+STEP 1: WIFI SPECIFIC DIAGNOSIS
+→ "Does your wired/ethernet internet work fine?"
+→ "What devices are having WiFi problems?"
+→ "Can you see your WiFi network name in the available networks?"
+→ "Are you able to connect but just can't access the internet?"
+
+STEP 2: WIFI NETWORK IDENTIFICATION
+→ "What WiFi networks do you see from your router?"
+→ "Are you connecting to a 2.4GHz or 5GHz network?"
+→ "What's the signal strength showing on your device?"
+
+STEP 3: WIFI PASSWORD & SECURITY
+→ "Are you getting a password error?"
+→ "When did you last change your WiFi password?"
+→ "Let me verify the current WiFi password in our system"
+
+STEP 4: DEVICE COMPATIBILITY
+→ "What type of device is having issues?" (Phone, laptop, tablet, smart TV, etc.)
+→ "Is this a new device or has it worked before?"
+→ "What operating system is it running?"
+
+STEP 5: WIFI OPTIMIZATION
+→ "How far are you from the router?"
+→ "Are there walls or metal objects between you and the router?"
+→ "Let's try forgetting and reconnecting to the WiFi network"
+→ "Try connecting to the other frequency band"
+
+STEP 6: ROUTER CONFIGURATION
+→ "I'm going to check your router's WiFi settings remotely"
+→ "Let me verify the WiFi is enabled and broadcasting"
+→ "I'll check for any interference from neighboring networks"
+
+RESOLUTION PATHS:
+━━━━━━━━━━━━━━
+📶 WIFI EXTENDER: "Your home may need additional WiFi coverage"
+🔧 ROUTER REPLACEMENT: "Upgrading to a newer WiFi router"
+⚙️ CONFIGURATION UPDATE: "Optimizing WiFi channels and settings"
+🏠 MESH SYSTEM: "Whole-home WiFi solution recommendation"
+
+═══════════════════════════════════════════════════════════════════════════════
+                               PHONE SERVICE DIAGNOSTICS
+═══════════════════════════════════════════════════════════════════════════════
+
+📞 PHONE ISSUE TRIAGE
+═══════════════════════
+"What kind of phone issue are you experiencing?"
+
+PRIMARY CATEGORIES:
+A) No Dial Tone
+B) Can't Make Outgoing Calls
+C) Can't Receive Incoming Calls
+D) Poor Call Quality (Static, Echo, Dropouts)
+E) Voicemail Issues
+F) Caller ID Issues
+
+═══════════════════════════════════════════════════════════════════════════════
+
+A) NO DIAL TONE
+═══════════════
+
+STEP 1: BASIC VERIFICATION
+→ "Is this a traditional landline or VoIP service?"
+→ "What type of phone are you using?" (Cordless, corded, multiple phones)
+→ "When did you last have a working dial tone?"
+→ "Have you tried different phones?"
+
+STEP 2: POWER & CONNECTIONS (VoIP)
+→ "Is your internet working properly?"
+→ "Are there any lights on your phone adapter/ATA?"
+→ "What color are the lights?"
+→ "Is the phone cable securely connected to the adapter?"
+
+STEP 3: POWER & CONNECTIONS (Traditional)
+→ "Is your phone plugged directly into the wall jack?"
+→ "Can you try a different phone jack in your home?"
+→ "Do you have a corded phone to test with?"
+
+STEP 4: LINE TESTING
+→ "I'm going to test your phone line from our end"
+→ "I can see your line is [active/inactive/busy/fault detected]"
+→ FOR VOIP: "Let me check your internet connection quality"
+
+STEP 5: ISOLATION TESTING
+→ "Please unplug all phones and equipment from all jacks"
+→ "Plug just one basic corded phone into the main wall jack"
+→ "Do you have dial tone now?"
+
+RESOLUTION PATHS:
+━━━━━━━━━━━━━━
+🔧 LINE REPAIR: "Outside line issue detected, scheduling technician"
+📞 EQUIPMENT ISSUE: "Phone adapter needs replacement"
+🏠 INSIDE WIRING: "Issue with internal house wiring"
+⚡ POWER RESTORATION: "Service restored, please test"
+
+═══════════════════════════════════════════════════════════════════════════════
+
+B) CAN'T MAKE OUTGOING CALLS
+═════════════════════════════
+
+STEP 1: CALL ATTEMPT ANALYSIS  
+→ "What happens when you try to make a call?"
+   - Dead air/silence
+   - Busy signal
+   - Recording/message
+   - Rings but doesn't connect
+   - Goes straight to voicemail
+
+STEP 2: SPECIFIC NUMBERS
+→ "Are you trying to call specific numbers or all numbers?"
+→ "Can you call local numbers? Long distance? Cell phones?"
+→ "Try calling your own cell phone from the landline"
+
+STEP 3: DIALING PATTERNS
+→ "How are you dialing the number?"
+→ "Are you using 1+ for long distance calls?"
+→ "Try dialing 411 (directory assistance)"
+→ "Can you call our customer service line from that phone?"
+
+STEP 4: ACCOUNT STATUS
+→ "Let me check your account status"
+→ "Are there any restrictions or blocks on your line?"
+→ "Is your account in good standing?"
+
+STEP 5: LINE QUALITY TEST
+→ "I'm testing your ability to receive calls"
+→ "I'll call your number now - does it ring?"
+→ "Can you answer and hear me clearly?"
+
+RESOLUTION PATHS:
+━━━━━━━━━━━━━━
+🔒 CALL BLOCKING: "Removing long distance or outbound call restrictions"
+💳 ACCOUNT ISSUE: "Account payment needed to restore full service"
+🔧 SWITCH ISSUE: "Problem at the central office, escalating to engineering"
+📞 LINE REPAIR: "Outbound calling circuit needs repair"
+
+═══════════════════════════════════════════════════════════════════════════════
+
+C) POOR CALL QUALITY
+═════════════════════
+
+STEP 1: QUALITY ISSUE IDENTIFICATION
+→ "Can you describe the audio problem?"
+   - Static/crackling
+   - Echo
+   - Low volume/hard to hear
+   - Cutting in and out
+   - One-way audio
+   - Robotic/digital sound
+
+STEP 2: CONSISTENCY CHECK
+→ "Does this happen on all calls or just some?"
+→ "Does it happen when calling specific numbers?"
+→ "Is it worse at certain times of day?"
+→ "Do callers complain about hearing you, or do you have trouble hearing them?"
+
+STEP 3: EQUIPMENT TESTING
+→ "Are you using a cordless phone or corded phone?"
+→ "If cordless, does the problem happen when you're close to the base?"
+→ "Try a different phone if possible"
+→ "Are you using any phone accessories (headsets, amplifiers)?"
+
+STEP 4: ENVIRONMENTAL FACTORS
+→ "Do you have the phone near any electronic devices?"
+→ "Are there any new appliances or devices in your home?"
+→ "Does the quality change if you move to a different room?"
+
+STEP 5: LINE QUALITY ANALYSIS
+→ "I'm going to test your line quality"
+→ "Let me call you and we'll do an audio test"
+→ "I'm seeing [noise/distortion/signal loss] on your line"
+
+RESOLUTION PATHS:
+━━━━━━━━━━━━━━
+🔧 LINE CONDITIONING: "Installing filters to improve call quality"
+📞 EQUIPMENT REPLACEMENT: "Phone or adapter causing audio issues"
+⚡ ELECTRICAL INTERFERENCE: "Identifying and eliminating interference sources"
+🛠️ LINE REPAIR: "Physical line damage affecting call quality"
+
+═══════════════════════════════════════════════════════════════════════════════
+                                TV SERVICE DIAGNOSTICS  
+═══════════════════════════════════════════════════════════════════════════════
+
+📺 TV ISSUE TRIAGE
+════════════════════
+"What type of TV issue are you experiencing?"
+
+PRIMARY CATEGORIES:
+A) No Signal/Black Screen
+B) Poor Picture Quality  
+C) Missing Channels
+D) Audio Issues
+E) DVR/Recording Problems
+F) On-Demand/Streaming Issues
+G) Remote Control Issues
+
+═══════════════════════════════════════════════════════════════════════════════
+
+A) NO SIGNAL/BLACK SCREEN
+═════════════════════════
+
+STEP 1: BASIC STATUS CHECK
+→ "Is your TV turning on properly?"
+→ "Are you getting a 'No Signal' message or completely black screen?"
+→ "What input/source is your TV set to?"
+→ "Are there any lights showing on your cable box?"
+
+STEP 2: EQUIPMENT IDENTIFICATION
+→ "What cable box do you have?" (Model number)
+→ "Do you have multiple TVs? Are they all affected?"
+→ "Are you using our cable box or a third-party device?"
+
+STEP 3: CONNECTION VERIFICATION
+→ "Is the cable box plugged into power and turned on?"
+→ "Are all cables securely connected?"
+→ "Is the HDMI/component cable firmly connected to both the box and TV?"
+→ "Can you trace the coax cable from the wall to the cable box?"
+
+STEP 4: TV INPUT SETTINGS
+→ "What input is your TV currently on?" (HDMI1, HDMI2, etc.)
+→ "Try pressing the Input or Source button on your TV remote"
+→ "Look for the input that shows your cable box"
+
+STEP 5: CABLE BOX REBOOT
+→ "Let's restart your cable box"
+→ "Unplug the power cord from the cable box"
+→ "Wait 30 seconds, then plug it back in"
+→ "Wait 3-5 minutes for it to fully boot up"
+→ "What do you see on your TV now?"
+
+STEP 6: SIGNAL TESTING
+→ "I'm checking the signal to your cable box"
+→ "Your box is showing [online/offline/weak signal]"
+→ "Let me send a refresh signal to your equipment"
+
+RESOLUTION PATHS:
+━━━━━━━━━━━━━━
+📺 EQUIPMENT REPLACEMENT: "Cable box malfunction, sending replacement"
+🔧 LINE REPAIR: "Signal issue detected, scheduling technician"
+⚙️ SIGNAL REFRESH: "Resetting your cable box authorization"
+🛠️ INSTALLATION ISSUE: "Checking connections and setup"
+
+═══════════════════════════════════════════════════════════════════════════════
+
+B) POOR PICTURE QUALITY
+════════════════════════
+
+STEP 1: PICTURE PROBLEM IDENTIFICATION
+→ "Can you describe what you're seeing?"
+   - Pixelated/blocky picture
+   - Fuzzy/blurry image
+   - Color problems
+   - Picture freezing
+   - Picture cutting out
+   - Wrong aspect ratio/stretched
+
+STEP 2: CHANNEL SPECIFICITY
+→ "Does this happen on all channels or specific ones?"
+→ "Are HD channels worse than standard channels?"
+→ "Does it happen on local channels vs. cable channels?"
+
+STEP 3: TIMING PATTERNS  
+→ "Does this happen all the time or at specific times?"
+→ "Is it worse during certain weather conditions?"
+→ "Does it happen more during prime time hours?"
+
+STEP 4: CABLE AND CONNECTION CHECK
+→ "Are you using HDMI or component cables?"
+→ "Are the cables damaged or bent?"
+→ "Try a different HDMI port on your TV"
+→ "Are there any splitters between the wall and your cable box?"
+
+STEP 5: TV SETTINGS VERIFICATION
+→ "What's your TV resolution set to?"
+→ "Is your TV set to the correct aspect ratio?"
+→ "Have you changed any picture settings recently?"
+
+STEP 6: SIGNAL QUALITY ANALYSIS
+→ "I'm checking your signal strength and quality"
+→ "Your signal shows [strong/weak/intermittent]"
+→ "There appears to be [noise/interference/signal loss]"
+
+RESOLUTION PATHS:
+━━━━━━━━━━━━━━
+📶 SIGNAL CONDITIONING: "Installing amplifier or attenuator to optimize signal"
+🔧 LINE MAINTENANCE: "Cleaning connections and replacing damaged cables" 
+⚙️ EQUIPMENT CALIBRATION: "Adjusting cable box video settings"
+🛠️ SYSTEM UPGRADE: "Upgrading to newer HD equipment"
+
+═══════════════════════════════════════════════════════════════════════════════
+                              MOBILE SERVICE DIAGNOSTICS
+═══════════════════════════════════════════════════════════════════════════════
+
+📱 MOBILE ISSUE TRIAGE  
+════════════════════════
+"What mobile service issue are you experiencing?"
+
+PRIMARY CATEGORIES:
+A) No Signal/Service
+B) Poor Call Quality  
+C) Data/Internet Not Working
+D) Text Messaging Issues
+E) Voicemail Problems
+F) Roaming Issues
+
+═══════════════════════════════════════════════════════════════════════════════
+
+A) NO SIGNAL/SERVICE
+════════════════════
+
+STEP 1: BASIC STATUS CHECK
+→ "What phone model do you have?"
+→ "Are you showing any signal bars?"
+→ "What does your phone display show?" (No Service, Emergency Only, Searching)
+→ "When did you last have working service?"
+
+STEP 2: LOCATION VERIFICATION
+→ "Where are you located right now?"
+→ "Is this a location where you normally have good service?"
+→ "Have you tried going outside or to a different location?"
+→ "Are others with the same carrier having issues in your area?"
+
+STEP 3: DEVICE RESTART
+→ "Let's restart your phone completely"
+→ "Turn your phone off, wait 10 seconds, then turn it back on"
+→ "Wait for it to fully boot up and search for signal"
+→ "Are you seeing any signal bars now?"
+
+STEP 4: NETWORK SETTINGS
+→ "Let's try toggling airplane mode on and off"
+→ "Go to Settings and turn on Airplane Mode for 10 seconds"
+→ "Turn Airplane Mode back off"
+→ "Is your phone picking up signal now?"
+
+STEP 5: CARRIER SETTINGS UPDATE
+→ "Let's check for carrier updates"
+→ "Go to Settings > General > About"
+→ "If prompted, install any carrier updates"
+→ "For Android: Settings > System > System Update"
+
+STEP 6: ACCOUNT & COVERAGE CHECK
+→ "Let me verify your account status"
+→ "Your account shows [active/suspended/payment issue]"
+→ "I'm checking coverage maps for your area"
+→ "There [is/isn't] a known tower issue in your location"
+
+RESOLUTION PATHS:
+━━━━━━━━━━━━━━
+📶 TOWER MAINTENANCE: "Network maintenance in your area, estimated completion X hours"
+💳 ACCOUNT RESTORATION: "Account payment needed to restore service"
+📱 DEVICE TROUBLESHOOTING: "Device settings or hardware issue"
+🗼 COVERAGE ISSUE: "Recommending signal booster or alternative coverage"
+
+═══════════════════════════════════════════════════════════════════════════════
+                            ESCALATION & RESOLUTION MATRIX
+═══════════════════════════════════════════════════════════════════════════════
+
+🚨 IMMEDIATE ESCALATION TRIGGERS
+═══════════════════════════════════
+→ Customer mentions emergency services needed
+→ Business customer with SLA requirements  
+→ Safety/security system failures
+→ Customer threatens regulatory complaints
+→ Technical issue beyond agent capability
+→ Customer requests supervisor after troubleshooting
+
+🔧 STANDARD RESOLUTION ACTIONS
+══════════════════════════════
+📅 TECHNICIAN DISPATCH
+   - Outside line/cable issues
+   - Signal problems requiring on-site work
+   - Equipment installation/replacement
+   - Complex wiring issues
+
+📦 EQUIPMENT REPLACEMENT  
+   - Modem/router malfunctions
+   - Cable box failures
+   - Phone adapter issues
+   - Defective devices under warranty
+
+⚙️ REMOTE TROUBLESHOOTING
+   - Signal refreshes and resets
+   - Configuration updates
+   - Account provisioning changes
+   - Software/firmware updates
+
+💳 ACCOUNT ADJUSTMENTS
+   - Service credits for outages
+   - Plan changes and upgrades
+   - Feature additions/removals
+   - Billing corrections
+
+🎓 CUSTOMER EDUCATION
+   - Equipment usage training
+   - WiFi optimization tips
+   - Account management tools
+   - Preventive maintenance
+
+═══════════════════════════════════════════════════════════════════════════════
+                               FOLLOW-UP PROTOCOLS
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ ISSUE RESOLUTION CONFIRMATION
+═══════════════════════════════════
+→ "Let's test your [service] to make sure everything is working"
+→ "Are you satisfied with the resolution?"
+→ "Do you have any other questions or concerns?"
+→ "Is there anything else I can help you with today?"
+
+📞 CALLBACK SCHEDULING
+═══════════════════════  
+→ For complex issues requiring time to resolve
+→ After technician visits to confirm resolution
+→ For service credits or follow-up actions
+→ Customer preference for callback vs. holding
+
+📝 CASE DOCUMENTATION
+══════════════════════
+→ Document all troubleshooting steps taken
+→ Record customer responses and test results
+→ Note any equipment serial numbers or model info
+→ Include resolution details and follow-up requirements
+→ Set appropriate case priority and category
+
+🏷️ CASE CATEGORIZATION
+═══════════════════════
+PRIORITY LEVELS:
+→ P1 (Emergency): Safety/security, business critical
+→ P2 (High): Complete service outage, multiple services down
+→ P3 (Medium): Partial service issues, quality problems  
+→ P4 (Low): Minor issues, account questions, how-to requests
+
+SERVICE CATEGORIES:
+→ Internet: Connectivity, speed, WiFi, email
+→ Phone: Voice quality, features, voicemail
+→ TV: Picture, audio, channels, DVR, on-demand
+→ Mobile: Coverage, data, voice, messaging
+→ Account: Billing, changes, technical support
+→ Installation: New service, moves, equipment
+
+═══════════════════════════════════════════════════════════════════════════════
+                                 SPECIAL SITUATIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+🌊 WEATHER-RELATED OUTAGES
+═══════════════════════════
+→ Check weather alerts and service bulletins
+→ Provide realistic restoration timeframes
+→ Explain temporary vs. permanent repairs
+→ Offer mobile hotspot if available
+→ Document weather-related damage for insurance
+
+🏠 MOVING/RELOCATION SERVICES  
+══════════════════════════════
+→ Verify service availability at new address
+→ Schedule disconnect at old address
+→ Coordinate installation at new location
+→ Transfer or upgrade service plans
+→ Provide temporary service options during move
+
+👥 BUSINESS CUSTOMER PROTOCOLS
+═══════════════════════════════
+→ Priority handling per SLA agreements
+→ Check business hours and impact assessment
+→ Escalate for revenue-affecting issues
+→ Document business continuity requirements
+→ Provide regular status updates
+
+🔒 SECURITY & PRIVACY CONCERNS
+═══════════════════════════════
+→ Verify account ownership thoroughly
+→ Don't share technical details with unauthorized users
+→ Document any suspected fraud or abuse
+→ Escalate security-related incidents
+→ Follow data protection protocols
+
+═══════════════════════════════════════════════════════════════════════════════
+                                   CLOSING NOTES
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 AGENT REMINDERS:
+→ Always verify account ownership before troubleshooting
+→ Document every step taken and customer response  
+→ Set realistic expectations for resolution timeframes
+→ Provide ticket/case numbers for customer reference
+→ Follow up on commitments made during the call
+→ Escalate when in doubt - better safe than sorry
+→ Maintain professional and empathetic communication throughout
+
+🎯 SUCCESS METRICS:
+→ First Call Resolution (FCR) rate
+→ Customer Satisfaction (CSAT) scores  
+→ Average Handle Time (AHT) optimization
+→ Escalation rate monitoring
+→ Technical accuracy and completeness
+→ Follow-up completion rate
+
+═══════════════════════════════════════════════════════════════════════════════
+END OF DIAGNOSTIC TREE - VERSION 1.0
+═══════════════════════════════════════════════════════════════════════════════

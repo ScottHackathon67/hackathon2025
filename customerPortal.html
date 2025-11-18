@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontier Customer Support Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #FF0000 0%, #cc0000 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* Main Container */
+        .container {
+            flex: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 1px solid #e5e5e5;
+        }
+
+        .welcome-section h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .welcome-section p {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* Form Container */
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid #e5e5e5;
+        }
+
+        .form-title {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .form-group .required {
+            color: #FF0000;
+        }
+
+        /* Dropdown Styling */
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #FF0000;
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+        }
+
+        select:hover {
+            border-color: #ccc;
+        }
+
+        /* Textarea Styling */
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #FF0000;
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+        }
+
+        textarea:hover {
+            border-color: #ccc;
+        }
+
+        textarea::placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Character Counter */
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .char-counter.warning {
+            color: #D97706;
+        }
+
+        .char-counter.danger {
+            color: #DC2626;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 15px 20px;
+            background: #FF0000;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 0, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Help Section */
+        .help-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid #3B82F6;
+        }
+
+        .help-section h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .help-section li {
+            padding: 4px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .help-section li::before {
+            content: "•";
+            color: #3B82F6;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #000;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            background: #10B981;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* QR Code Styles */
+        .qr-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 1px solid #e5e5e5;
+            text-align: center;
+        }
+
+        .qr-code-container {
+            display: inline-block;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #e5e5e5;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .qr-code-container:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .qr-loading {
+            width: 150px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .share-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #e5e5e5;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #333;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .share-btn:hover {
+            border-color: #FF0000;
+            color: #FF0000;
+            transform: translateY(-2px);
+        }
+
+        /* Diagnostic Flow Styles */
+        .diagnostic-option {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            margin: 8px 0;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+
+        .diagnostic-option:hover {
+            border-color: #3B82F6;
+            background: #f0f7ff;
+        }
+
+        .diagnostic-option.selected {
+            border-color: #3B82F6;
+            background: #3B82F6;
+            color: white;
+        }
+
+        .diagnostic-option:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .diagnostic-text-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin: 8px 0;
+        }
+
+        .diagnostic-text-input:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .diagnostic-recommendation {
+            background: #f0fdf4;
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .diagnostic-recommendation h5 {
+            color: #059669;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .diagnostic-recommendation p {
+            color: #065f46;
+            font-size: 13px;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        /* Focus Styling for Accessibility */
+        select:focus,
+        textarea:focus,
+        .submit-btn:focus,
+        .share-btn:focus,
+        .diagnostic-option:focus {
+            outline: 3px solid #FF0000;
+            outline-offset: 2px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .form-container {
+                padding: 25px 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .header p {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>🏠 Frontier Customer Support Portal</h1>
+        <p>We're here to help resolve your service issues quickly and efficiently</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h2>Welcome to Customer Support</h2>
+            <p>To better assist you, please select the reason for your call and provide any specific details about the issue you're experiencing. This information helps our support team prepare and resolve your concern more efficiently.</p>
+        </div>
+
+        <!-- Form Container -->
+        <div class="form-container">
+            <div class="success-message" id="successMessage">
+                ✓ Your support request has been submitted successfully! An agent will be with you shortly.
+            </div>
+
+            <h2 class="form-title">Tell us how we can help you today</h2>
+
+            <!-- Quick Diagnostic Option -->
+            <div style="text-align: center; margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%); border-radius: 12px; border: 2px solid #3B82F6;">
+                <h3 style="color: #1e40af; margin-bottom: 10px; font-size: 18px;">🔧 Try Our Quick Self-Diagnostic First</h3>
+                <p style="color: #3730a3; font-size: 14px; margin-bottom: 15px; line-height: 1.5;">
+                    Answer a few quick questions to help identify your issue and get instant recommendations. This often resolves problems faster than waiting for an agent!
+                </p>
+                <button type="button" class="submit-btn" id="diagnosticBtn" tabindex="1" style="background: #3B82F6; border: none; font-size: 16px; padding: 15px 30px;">
+                    🔧 Start Quick Diagnostics (2-3 minutes)
+                </button>
+                <p style="color: #6366f1; font-size: 12px; margin-top: 8px; font-style: italic;">
+                    Or skip and proceed directly to agent support below
+                </p>
+            </div>
+
+            <form id="supportForm">
+                <!-- Reason for Call Dropdown -->
+                <div class="form-group">
+                    <label for="callReason">
+                        What can we help you with today? <span style="color: #666; font-weight: normal;">(Optional)</span>
+                    </label>
+                    <select id="callReason" name="callReason" tabindex="2">
+                        <option value="">Please select a reason for your call</option>
+                        <optgroup label="Internet Service Issues">
+                            <option value="internet-no-connection">No internet connection</option>
+                            <option value="internet-slow-speeds">Slow internet speeds</option>
+                            <option value="internet-intermittent">Intermittent internet connection</option>
+                            <option value="internet-wifi-issues">Wi-Fi connection problems</option>
+                            <option value="internet-outage">Service outage in my area</option>
+                        </optgroup>
+                        <optgroup label="Phone Service Issues">
+                            <option value="phone-no-dial-tone">No dial tone</option>
+                            <option value="phone-static-noise">Static or noise on the line</option>
+                            <option value="phone-dropped-calls">Calls keep dropping</option>
+                            <option value="phone-cant-make-calls">Unable to make outgoing calls</option>
+                            <option value="phone-cant-receive-calls">Not receiving incoming calls</option>
+                        </optgroup>
+                        <optgroup label="TV Service Issues">
+                            <option value="tv-no-signal">No TV signal or black screen</option>
+                            <option value="tv-poor-quality">Poor picture or sound quality</option>
+                            <option value="tv-channels-missing">Missing channels</option>
+                            <option value="tv-remote-issues">Remote control not working</option>
+                            <option value="tv-dvr-problems">DVR recording issues</option>
+                        </optgroup>
+                        <optgroup label="Mobile Service Issues">
+                            <option value="mobile-no-signal">No cellular signal</option>
+                            <option value="mobile-data-issues">Mobile data not working</option>
+                            <option value="mobile-text-issues">Cannot send/receive texts</option>
+                            <option value="mobile-voicemail-issues">Voicemail problems</option>
+                        </optgroup>
+                        <optgroup label="Billing & Account">
+                            <option value="billing-question">Billing question or dispute</option>
+                            <option value="billing-payment">Payment assistance</option>
+                            <option value="account-changes">Account changes or updates</option>
+                            <option value="account-access">Cannot access my account online</option>
+                        </optgroup>
+                        <optgroup label="Equipment & Installation">
+                            <option value="equipment-replacement">Equipment replacement or repair</option>
+                            <option value="equipment-setup">Equipment setup assistance</option>
+                            <option value="installation-schedule">Schedule new installation</option>
+                            <option value="installation-reschedule">Reschedule existing appointment</option>
+                        </optgroup>
+                        <optgroup label="New Services">
+                            <option value="new-service">Add new services</option>
+                            <option value="upgrade-service">Upgrade existing services</option>
+                            <option value="move-service">Transfer service to new address</option>
+                        </optgroup>
+                        <optgroup label="Other">
+                            <option value="complaint">File a complaint</option>
+                            <option value="technical-support">General technical support</option>
+                            <option value="other">Other (please specify in details)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Specific Details Text Area -->
+                <div class="form-group">
+                    <label for="specificDetails">
+                        Please provide specific details about your issue
+                    </label>
+                    <textarea 
+                        id="specificDetails" 
+                        name="specificDetails" 
+                        placeholder="Please describe your issue in detail. Include any error messages, when the problem started, steps you've already tried, and any other relevant information that might help us resolve your issue faster."
+                        maxlength="1000"
+                        tabindex="3"
+                    ></textarea>
+                    <div class="char-counter" id="charCounter">0 / 1000 characters</div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn" id="submitBtn" tabindex="4">
+                    Connect me with Support
+                </button>
+            </form>
+
+            <!-- Diagnostic Flow Section -->
+            <div id="diagnosticSection" style="display: none; margin-top: 30px;">
+                <div style="background: #f0f7ff; border: 2px solid #3B82F6; border-radius: 12px; padding: 25px;">
+                    <div id="diagnosticHeader" style="text-align: center; margin-bottom: 20px;">
+                        <h3 style="color: #1e40af; margin-bottom: 10px;">🔧 Interactive Diagnostics</h3>
+                        <p style="color: #3730a3; font-size: 14px;">Answer a few questions to help identify your issue</p>
+                    </div>
+                    
+                    <div id="diagnosticProgress" style="background: white; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 14px; font-weight: 600; color: #333;">Progress</span>
+                            <span id="progressText" style="font-size: 14px; color: #666;">Step 1 of 5</span>
+                        </div>
+                        <div style="background: #e5e7eb; height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div id="progressBar" style="background: #3B82F6; height: 100%; width: 20%; transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="diagnosticContent">
+                        <div id="questionContainer" style="margin-bottom: 25px;">
+                            <h4 id="currentQuestion" style="color: #333; margin-bottom: 15px; font-size: 16px;"></h4>
+                            <div id="answerOptions"></div>
+                        </div>
+                        
+                        <div id="diagnosticActions" style="text-align: center;">
+                            <button id="prevBtn" class="share-btn" style="margin-right: 10px; display: none;">
+                                ← Previous
+                            </button>
+                            <button id="nextBtn" class="share-btn" style="background: #3B82F6; color: white; border-color: #3B82F6;">
+                                Next →
+                            </button>
+                            <button id="completeDiagnosticBtn" class="share-btn" style="background: #10B981; color: white; border-color: #10B981; display: none;">
+                                Complete Diagnostics
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="diagnosticResults" style="display: none; background: white; border-radius: 8px; padding: 20px; margin-top: 20px;">
+                        <h4 style="color: #059669; margin-bottom: 15px;">✅ Diagnostic Complete</h4>
+                        <div id="recommendedActions"></div>
+                        <div id="diagnosticSummary" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 14px; color: #666;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QR Code Share Section -->
+            <div class="qr-section">
+                <h3 style="color: #333; margin-bottom: 15px; font-size: 18px;">📱 Share This Portal</h3>
+                <p style="color: #666; font-size: 14px; margin-bottom: 15px; line-height: 1.5;">
+                    Share this support portal with family members or have it ready on multiple devices
+                </p>
+                
+                <div class="qr-code-container" id="qr-code-container">
+                    <div id="qr-code" class="qr-loading">Loading QR...</div>
+                </div>
+                
+                <p style="color: #666; font-size: 12px; margin-bottom: 15px;">
+                    Scan with any smartphone camera to open this page
+                </p>
+                
+                <div class="share-options">
+                    <button class="share-btn" onclick="copyToClipboard()" tabindex="6">
+                        📋 Copy Link
+                    </button>
+                    <button class="share-btn" onclick="shareViaEmail()" tabindex="7">
+                        📬 Email Link
+                    </button>
+                    <button class="share-btn" onclick="shareViaSMS()" tabindex="8">
+                        📱 Text Link
+                    </button>
+                    <button class="share-btn" onclick="generateNewQR()" tabindex="9">
+                        🔄 Refresh QR
+                    </button>
+                </div>
+            </div>
+
+            <!-- Help Section -->
+            <div class="help-section">
+                <h3>💡 Tips for faster support</h3>
+                <ul>
+                    <li>Be as specific as possible about when the issue started</li>
+                    <li>Mention any error messages you're seeing</li>
+                    <li>Let us know what troubleshooting steps you've already tried</li>
+                    <li>Include your location if you suspect a service outage</li>
+                    <li>Have your account information ready when connecting with an agent</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <strong>FRONTIER COMMUNICATIONS</strong> | Customer Support Portal | Available 24/7
+    </div>
+
+    <script>
+        // Character counter functionality
+        const textarea = document.getElementById('specificDetails');
+        const charCounter = document.getElementById('charCounter');
+        const maxLength = 1000;
+
+        textarea.addEventListener('input', function() {
+            const currentLength = this.value.length;
+            charCounter.textContent = `${currentLength} / ${maxLength} characters`;
+            
+            // Update styling based on character count
+            if (currentLength > maxLength * 0.9) {
+                charCounter.classList.add('danger');
+                charCounter.classList.remove('warning');
+            } else if (currentLength > maxLength * 0.75) {
+                charCounter.classList.add('warning');
+                charCounter.classList.remove('danger');
+            } else {
+                charCounter.classList.remove('warning', 'danger');
+            }
+        });
+
+        // Form submission handling
+        const form = document.getElementById('supportForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const callReason = document.getElementById('callReason').value;
+            const specificDetails = document.getElementById('specificDetails').value;
+            
+            // Note: Call reason is now optional - customers can use diagnostics instead
+
+            // Simulate form submission
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Connecting...';
+            
+            setTimeout(() => {
+                // Show success message
+                successMessage.classList.add('show');
+                
+                // Reset form
+                form.reset();
+                charCounter.textContent = '0 / 1000 characters';
+                charCounter.classList.remove('warning', 'danger');
+                
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Connect me with Support';
+                
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    successMessage.classList.remove('show');
+                }, 5000);
+                
+                // In a real application, this would redirect to a chat or call interface
+                console.log('Support request submitted:', {
+                    reason: callReason,
+                    details: specificDetails,
+                    timestamp: new Date().toISOString()
+                });
+                
+            }, 2000);
+        });
+
+        // Keyboard navigation enhancements
+        document.addEventListener('keydown', function(e) {
+            // Allow Enter key to submit form when not in textarea
+            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                if (document.activeElement === submitBtn) {
+                    form.dispatchEvent(new Event('submit'));
+                } else {
+                    // Move to next focusable element
+                    const focusableElements = form.querySelectorAll('select, textarea, button');
+                    const currentIndex = Array.from(focusableElements).indexOf(document.activeElement);
+                    if (currentIndex >= 0 && currentIndex < focusableElements.length - 1) {
+                        focusableElements[currentIndex + 1].focus();
+                    }
+                }
+            }
+        });
+
+        // QR Code Generation Functions
+        function generateQRCode(text, elementId) {
+            const qrContainer = document.getElementById(elementId);
+            
+            // Show loading state
+            qrContainer.innerHTML = '<div class="qr-loading">Generating QR...</div>';
+            
+            // Generate QR code using QR Server API
+            const size = 150;
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}&bgcolor=ffffff&color=000000`;
+            
+            setTimeout(() => {
+                qrContainer.innerHTML = `
+                    <img src="${qrUrl}" 
+                         alt="QR Code for Customer Portal" 
+                         style="width: ${size}px; height: ${size}px; border-radius: 4px;"
+                         onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\"qr-loading\">QR Code Error</div>'"
+                    />
+                `;
+            }, 500);
+        }
+        
+        function generateNewQR() {
+            // Get current URL
+            const currentUrl = window.location.href;
+            generateQRCode(currentUrl, 'qr-code');
+        }
+        
+        // Share Functions
+        function copyToClipboard() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                // Show temporary success message
+                const btn = event.target;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✓ Copied!';
+                btn.style.background = '#10B981';
+                btn.style.color = 'white';
+                btn.style.borderColor = '#10B981';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = 'white';
+                    btn.style.color = '#333';
+                    btn.style.borderColor = '#e5e5e5';
+                }, 2000);
+            }).catch(() => {
+                // Fallback for older browsers
+                prompt('Copy this link:', url);
+            });
+        }
+        
+        function shareViaEmail() {
+            const url = window.location.href;
+            const subject = 'Frontier Customer Support Portal';
+            const body = `Hi! Here's a link to the Frontier Customer Support Portal where you can submit your support request:\n\n${url}`;
+            
+            const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.open(mailtoUrl);
+        }
+        
+        function shareViaSMS() {
+            const url = window.location.href;
+            const message = `Frontier Support Portal: ${url}`;
+            
+            // Try native SMS sharing first
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Frontier Customer Support Portal',
+                    text: 'Submit your support request here:',
+                    url: url
+                }).catch(() => {
+                    // Fallback to SMS URL
+                    window.open(`sms:?body=${encodeURIComponent(message)}`);
+                });
+            } else {
+                // Fallback to SMS URL
+                window.open(`sms:?body=${encodeURIComponent(message)}`);
+            }
+        }
+        
+        // Diagnostic Flow System
+        class DiagnosticFlow {
+            constructor() {
+                this.currentStep = 0;
+                this.answers = [];
+                this.diagnosticLog = [];
+                this.serviceType = null;
+                this.issueCategory = null;
+                
+                this.questions = {
+                    // Initial Service Triage
+                    serviceSelection: {
+                        question: "Which service are you experiencing issues with?",
+                        type: "multiple",
+                        options: [
+                            { value: "internet", text: "🌐 Internet/WiFi Service" },
+                            { value: "phone", text: "📞 Phone Service" },
+                            { value: "tv", text: "📺 TV/Cable Service" },
+                            { value: "mobile", text: "📱 Mobile Service" },
+                            { value: "multiple", text: "🔄 Multiple Services" }
+                        ]
+                    },
+                    
+                    // Internet Diagnostics
+                    internet: {
+                        issueType: {
+                            question: "What type of internet issue are you experiencing?",
+                            type: "multiple",
+                            options: [
+                                { value: "no-connection", text: "❌ No internet connection at all" },
+                                { value: "slow-speeds", text: "🐌 Slow internet speeds" },
+                                { value: "intermittent", text: "⚡ Connection drops/intermittent" },
+                                { value: "wifi-issues", text: "📶 WiFi connection problems" },
+                                { value: "email-issues", text: "✉️ Email not working" }
+                            ]
+                        },
+                        
+                        "no-connection": {
+                            whenStarted: {
+                                question: "When did you first notice the internet wasn't working?",
+                                type: "multiple",
+                                options: [
+                                    { value: "just-now", text: "Just now/within the last hour" },
+                                    { value: "today", text: "Earlier today" },
+                                    { value: "yesterday", text: "Yesterday" },
+                                    { value: "few-days", text: "A few days ago" },
+                                    { value: "longer", text: "More than a week ago" }
+                                ]
+                            },
+                            modemLights: {
+                                question: "What lights do you see on your modem/router?",
+                                type: "multiple",
+                                options: [
+                                    { value: "all-green", text: "✅ All lights are green/blue" },
+                                    { value: "red-internet", text: "🔴 Internet light is red/orange" },
+                                    { value: "no-lights", text: "⚫ No lights at all" },
+                                    { value: "blinking", text: "💫 Lights are blinking" },
+                                    { value: "unsure", text: "❓ I'm not sure/can't see" }
+                                ]
+                            },
+                            deviceTested: {
+                                question: "Have you tried connecting directly to your modem with an ethernet cable?",
+                                type: "multiple",
+                                options: [
+                                    { value: "yes-works", text: "✅ Yes, ethernet works fine" },
+                                    { value: "yes-no-work", text: "❌ Yes, but ethernet doesn't work either" },
+                                    { value: "no-cable", text: "🔌 No, I don't have an ethernet cable" },
+                                    { value: "not-tried", text: "❓ No, I haven't tried that" }
+                                ]
+                            }
+                        },
+                        
+                        "slow-speeds": {
+                            speedExpected: {
+                                question: "What internet speed package do you have?",
+                                type: "multiple",
+                                options: [
+                                    { value: "not-sure", text: "❓ I'm not sure" },
+                                    { value: "basic", text: "📶 Basic (up to 25 Mbps)" },
+                                    { value: "standard", text: "⚡ Standard (up to 100 Mbps)" },
+                                    { value: "premium", text: "🚀 Premium (up to 500 Mbps)" },
+                                    { value: "gigabit", text: "⚡ Gigabit (1000+ Mbps)" }
+                                ]
+                            },
+                            connectionType: {
+                                question: "Are you connected via WiFi or ethernet cable?",
+                                type: "multiple",
+                                options: [
+                                    { value: "wifi", text: "📶 WiFi connection" },
+                                    { value: "ethernet", text: "🔌 Ethernet cable" },
+                                    { value: "both-slow", text: "🔄 Both are slow" }
+                                ]
+                            },
+                            devicesConnected: {
+                                question: "How many devices are currently using your internet?",
+                                type: "multiple",
+                                options: [
+                                    { value: "1-2", text: "1-2 devices" },
+                                    { value: "3-5", text: "3-5 devices" },
+                                    { value: "6-10", text: "6-10 devices" },
+                                    { value: "10-plus", text: "More than 10 devices" },
+                                    { value: "not-sure", text: "❓ I'm not sure" }
+                                ]
+                            }
+                        }
+                    },
+                    
+                    // Phone Diagnostics
+                    phone: {
+                        issueType: {
+                            question: "What type of phone issue are you experiencing?",
+                            type: "multiple",
+                            options: [
+                                { value: "no-dial-tone", text: "📵 No dial tone" },
+                                { value: "cant-make-calls", text: "📞 Can't make outgoing calls" },
+                                { value: "cant-receive", text: "📲 Can't receive incoming calls" },
+                                { value: "poor-quality", text: "📢 Poor call quality (static, echo)" },
+                                { value: "voicemail", text: "📧 Voicemail issues" }
+                            ]
+                        },
+                        
+                        "no-dial-tone": {
+                            phoneType: {
+                                question: "What type of phone service do you have?",
+                                type: "multiple",
+                                options: [
+                                    { value: "traditional", text: "📞 Traditional landline" },
+                                    { value: "voip", text: "🌐 VoIP (internet-based)" },
+                                    { value: "not-sure", text: "❓ I'm not sure" }
+                                ]
+                            },
+                            phonesTested: {
+                                question: "Have you tried different phones?",
+                                type: "multiple",
+                                options: [
+                                    { value: "yes-all-no-tone", text: "✅ Yes, no dial tone on any phone" },
+                                    { value: "yes-some-work", text: "✅ Yes, some phones work" },
+                                    { value: "only-one-phone", text: "📞 I only have one phone" },
+                                    { value: "not-tried", text: "❌ No, I haven't tried" }
+                                ]
+                            }
+                        }
+                    },
+                    
+                    // TV Diagnostics
+                    tv: {
+                        issueType: {
+                            question: "What type of TV issue are you experiencing?",
+                            type: "multiple",
+                            options: [
+                                { value: "no-signal", text: "📺 No signal/black screen" },
+                                { value: "poor-picture", text: "📼 Poor picture quality" },
+                                { value: "missing-channels", text: "📻 Missing channels" },
+                                { value: "audio-issues", text: "🔊 Audio problems" },
+                                { value: "dvr-issues", text: "⏺️ DVR/recording problems" }
+                            ]
+                        },
+                        
+                        "no-signal": {
+                            tvStatus: {
+                                question: "Is your TV turning on properly?",
+                                type: "multiple",
+                                options: [
+                                    { value: "tv-on-no-signal", text: "📺 TV is on but shows 'No Signal'" },
+                                    { value: "tv-on-black", text: "⚫ TV is on but completely black" },
+                                    { value: "tv-not-turning-on", text: "❌ TV won't turn on" }
+                                ]
+                            },
+                            cableBoxLights: {
+                                question: "What lights do you see on your cable box?",
+                                type: "multiple",
+                                options: [
+                                    { value: "normal-lights", text: "✅ Normal lights are on" },
+                                    { value: "no-lights", text: "⚫ No lights at all" },
+                                    { value: "blinking-lights", text: "💫 Lights are blinking" },
+                                    { value: "no-cable-box", text: "❓ I don't have a cable box" }
+                                ]
+                            }
+                        }
+                    },
+                    
+                    // Mobile Diagnostics
+                    mobile: {
+                        issueType: {
+                            question: "What type of mobile issue are you experiencing?",
+                            type: "multiple",
+                            options: [
+                                { value: "no-signal", text: "📵 No signal/service" },
+                                { value: "poor-calls", text: "📞 Poor call quality" },
+                                { value: "no-data", text: "🌐 Data/internet not working" },
+                                { value: "text-issues", text: "💬 Text messaging issues" }
+                            ]
+                        }
+                    }
+                };
+                
+                this.recommendations = {
+                    "internet-no-connection-red-internet": {
+                        title: "Signal Issue Detected",
+                        description: "The red internet light indicates a signal problem between your modem and our network.",
+                        actions: ["Check for area outages", "Test signal strength", "Schedule technician if needed"]
+                    },
+                    "internet-no-connection-no-lights": {
+                        title: "Power/Equipment Issue",
+                        description: "No lights suggests a power or equipment malfunction.",
+                        actions: ["Check power connections", "Try different power outlet", "Equipment replacement may be needed"]
+                    },
+                    "internet-slow-speeds-wifi": {
+                        title: "WiFi Optimization Needed",
+                        description: "WiFi performance can be improved through optimization.",
+                        actions: ["Test wired connection", "Optimize WiFi placement", "Check for interference"]
+                    },
+                    "phone-no-dial-tone-all-phones": {
+                        title: "Line Issue Suspected",
+                        description: "Since all phones have no dial tone, this indicates a line problem.",
+                        actions: ["Test phone line", "Check for outages", "Schedule line repair"]
+                    },
+                    "tv-no-signal-no-lights": {
+                        title: "Cable Box Power Issue",
+                        description: "No lights on the cable box suggests a power or equipment problem.",
+                        actions: ["Check power connections", "Reboot cable box", "Replace equipment if needed"]
+                    }
+                };
+            }
+            
+            start() {
+                this.currentStep = 0;
+                this.answers = [];
+                this.diagnosticLog = [];
+                this.showDiagnosticSection();
+                this.showQuestion('serviceSelection');
+            }
+            
+            showDiagnosticSection() {
+                document.getElementById('diagnosticSection').style.display = 'block';
+                document.getElementById('diagnosticSection').scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            showQuestion(questionKey, parentPath = '') {
+                const question = this.getQuestion(questionKey, parentPath);
+                if (!question) return;
+                
+                this.updateProgress();
+                
+                document.getElementById('currentQuestion').textContent = question.question;
+                
+                const optionsContainer = document.getElementById('answerOptions');
+                optionsContainer.innerHTML = '';
+                
+                if (question.type === 'multiple') {
+                    question.options.forEach((option, index) => {
+                        const button = document.createElement('button');
+                        button.className = 'diagnostic-option';
+                        button.textContent = option.text;
+                        button.onclick = () => this.selectAnswer(option.value, option.text);
+                        optionsContainer.appendChild(button);
+                    });
+                } else if (question.type === 'text') {
+                    const input = document.createElement('input');
+                    input.className = 'diagnostic-text-input';
+                    input.type = 'text';
+                    input.placeholder = 'Please provide details...';
+                    input.id = 'diagnosticTextInput';
+                    optionsContainer.appendChild(input);
+                    
+                    document.getElementById('nextBtn').onclick = () => {
+                        const value = input.value.trim();
+                        if (value) {
+                            this.selectAnswer(value, value);
+                        }
+                    };
+                }
+                
+                this.updateButtons();
+            }
+            
+            getQuestion(questionKey, parentPath = '') {
+                if (questionKey === 'serviceSelection') {
+                    return this.questions.serviceSelection;
+                }
+                
+                const parts = parentPath ? parentPath.split('-') : [];
+                let current = this.questions;
+                
+                for (const part of parts) {
+                    if (current[part]) {
+                        current = current[part];
+                    }
+                }
+                
+                return current[questionKey];
+            }
+            
+            selectAnswer(value, text) {
+                // Remove previous selection styling
+                document.querySelectorAll('.diagnostic-option').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                
+                // Add selection styling to clicked option
+                event.target.classList.add('selected');
+                
+                // Record answer
+                const questionText = document.getElementById('currentQuestion').textContent;
+                this.recordAnswer(questionText, text, value);
+                
+                // Enable next button
+                document.getElementById('nextBtn').disabled = false;
+                document.getElementById('nextBtn').onclick = () => this.nextQuestion(value);
+            }
+            
+            recordAnswer(question, answer, value) {
+                const entry = {
+                    step: this.currentStep + 1,
+                    question: question,
+                    answer: answer,
+                    value: value,
+                    timestamp: new Date().toISOString()
+                };
+                
+                this.answers.push(entry);
+                this.diagnosticLog.push({
+                    type: 'diagnostic-question',
+                    text: question,
+                    translation: question
+                });
+                this.diagnosticLog.push({
+                    type: 'customer',
+                    text: answer,
+                    translation: answer
+                });
+                
+                // Store in localStorage for agent console access
+                this.saveToStorage();
+            }
+            
+            saveToStorage() {
+                const diagnosticData = {
+                    answers: this.answers,
+                    diagnosticLog: this.diagnosticLog,
+                    serviceType: this.serviceType,
+                    issueCategory: this.issueCategory,
+                    timestamp: new Date().toISOString(),
+                    status: 'in-progress'
+                };
+                
+                localStorage.setItem('customerDiagnostics', JSON.stringify(diagnosticData));
+            }
+            
+            nextQuestion(selectedValue) {
+                this.currentStep++;
+                
+                if (this.currentStep === 1) {
+                    // Service selection
+                    this.serviceType = selectedValue;
+                    this.showQuestion('issueType', selectedValue);
+                } else if (this.currentStep === 2) {
+                    // Issue type selection
+                    this.issueCategory = selectedValue;
+                    this.showServiceSpecificQuestions(selectedValue);
+                } else {
+                    // Continue with service-specific questions
+                    this.continueServiceQuestions(selectedValue);
+                }
+            }
+            
+            showServiceSpecificQuestions(issueType) {
+                const servicePath = `${this.serviceType}-${issueType}`;
+                
+                if (this.serviceType === 'internet' && issueType === 'no-connection') {
+                    this.showQuestion('whenStarted', `${this.serviceType}.${issueType}`);
+                } else if (this.serviceType === 'internet' && issueType === 'slow-speeds') {
+                    this.showQuestion('speedExpected', `${this.serviceType}.${issueType}`);
+                } else if (this.serviceType === 'phone' && issueType === 'no-dial-tone') {
+                    this.showQuestion('phoneType', `${this.serviceType}.${issueType}`);
+                } else if (this.serviceType === 'tv' && issueType === 'no-signal') {
+                    this.showQuestion('tvStatus', `${this.serviceType}.${issueType}`);
+                } else {
+                    // Complete diagnostics for simpler flows
+                    this.completeDiagnostics();
+                }
+            }
+            
+            continueServiceQuestions(selectedValue) {
+                if (this.serviceType === 'internet' && this.issueCategory === 'no-connection') {
+                    if (this.currentStep === 3) {
+                        this.showQuestion('modemLights', `${this.serviceType}.${this.issueCategory}`);
+                    } else if (this.currentStep === 4) {
+                        this.showQuestion('deviceTested', `${this.serviceType}.${this.issueCategory}`);
+                    } else {
+                        this.completeDiagnostics();
+                    }
+                } else if (this.serviceType === 'internet' && this.issueCategory === 'slow-speeds') {
+                    if (this.currentStep === 3) {
+                        this.showQuestion('connectionType', `${this.serviceType}.${this.issueCategory}`);
+                    } else if (this.currentStep === 4) {
+                        this.showQuestion('devicesConnected', `${this.serviceType}.${this.issueCategory}`);
+                    } else {
+                        this.completeDiagnostics();
+                    }
+                } else if (this.serviceType === 'phone' && this.issueCategory === 'no-dial-tone') {
+                    if (this.currentStep === 3) {
+                        this.showQuestion('phonesTested', `${this.serviceType}.${this.issueCategory}`);
+                    } else {
+                        this.completeDiagnostics();
+                    }
+                } else if (this.serviceType === 'tv' && this.issueCategory === 'no-signal') {
+                    if (this.currentStep === 3) {
+                        this.showQuestion('cableBoxLights', `${this.serviceType}.${this.issueCategory}`);
+                    } else {
+                        this.completeDiagnostics();
+                    }
+                } else {
+                    this.completeDiagnostics();
+                }
+            }
+            
+            completeDiagnostics() {
+                document.getElementById('questionContainer').style.display = 'none';
+                document.getElementById('diagnosticActions').style.display = 'none';
+                
+                const results = document.getElementById('diagnosticResults');
+                results.style.display = 'block';
+                
+                // Generate recommendations
+                const recommendations = this.generateRecommendations();
+                const actionsContainer = document.getElementById('recommendedActions');
+                
+                if (recommendations.length > 0) {
+                    actionsContainer.innerHTML = recommendations.map(rec => `
+                        <div class="diagnostic-recommendation">
+                            <h5>${rec.title}</h5>
+                            <p>${rec.description}</p>
+                            ${rec.actions ? `<ul style="margin-top: 8px; padding-left: 20px;">${rec.actions.map(action => `<li style="font-size: 12px; margin: 2px 0;">${action}</li>`).join('')}</ul>` : ''}
+                        </div>
+                    `).join('');
+                } else {
+                    actionsContainer.innerHTML = `
+                        <div class="diagnostic-recommendation">
+                            <h5>Diagnostic Complete</h5>
+                            <p>Based on your responses, our support team will have detailed information to help resolve your issue quickly.</p>
+                        </div>
+                    `;
+                }
+                
+                // Show summary
+                document.getElementById('diagnosticSummary').innerHTML = `
+                    <strong>Diagnostic Summary:</strong><br>
+                    Service: ${this.serviceType?.toUpperCase()}<br>
+                    Issue: ${this.issueCategory?.replace('-', ' ').toUpperCase()}<br>
+                    Steps Completed: ${this.currentStep + 1}<br>
+                    Answers Recorded: ${this.answers.length}
+                `;
+                
+                // Update progress to 100%
+                document.getElementById('progressBar').style.width = '100%';
+                document.getElementById('progressText').textContent = 'Complete!';
+                
+                // Mark as complete and save
+                const diagnosticData = JSON.parse(localStorage.getItem('customerDiagnostics') || '{}');
+                diagnosticData.status = 'complete';
+                diagnosticData.recommendations = recommendations;
+                localStorage.setItem('customerDiagnostics', JSON.stringify(diagnosticData));
+            }
+            
+            generateRecommendations() {
+                const answers = this.answers;
+                const recommendations = [];
+                
+                // Generate recommendations based on answer patterns
+                if (this.serviceType === 'internet' && this.issueCategory === 'no-connection') {
+                    const modemLightAnswer = answers.find(a => a.question.includes('lights'));
+                    if (modemLightAnswer) {
+                        const recKey = `internet-no-connection-${modemLightAnswer.value}`;
+                        if (this.recommendations[recKey]) {
+                            recommendations.push(this.recommendations[recKey]);
+                        }
+                    }
+                } else if (this.serviceType === 'internet' && this.issueCategory === 'slow-speeds') {
+                    const connectionAnswer = answers.find(a => a.question.includes('WiFi or ethernet'));
+                    if (connectionAnswer && connectionAnswer.value === 'wifi') {
+                        recommendations.push(this.recommendations['internet-slow-speeds-wifi']);
+                    }
+                } else if (this.serviceType === 'phone' && this.issueCategory === 'no-dial-tone') {
+                    const phonesAnswer = answers.find(a => a.question.includes('different phones'));
+                    if (phonesAnswer && phonesAnswer.value === 'yes-all-no-tone') {
+                        recommendations.push(this.recommendations['phone-no-dial-tone-all-phones']);
+                    }
+                } else if (this.serviceType === 'tv' && this.issueCategory === 'no-signal') {
+                    const lightsAnswer = answers.find(a => a.question.includes('cable box'));
+                    if (lightsAnswer && lightsAnswer.value === 'no-lights') {
+                        recommendations.push(this.recommendations['tv-no-signal-no-lights']);
+                    }
+                }
+                
+                return recommendations;
+            }
+            
+            updateProgress() {
+                const totalSteps = 5; // Approximate
+                const progress = Math.min((this.currentStep / totalSteps) * 100, 90);
+                document.getElementById('progressBar').style.width = progress + '%';
+                document.getElementById('progressText').textContent = `Step ${this.currentStep + 1} of ${totalSteps}`;
+            }
+            
+            updateButtons() {
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+                
+                prevBtn.style.display = this.currentStep > 0 ? 'inline-block' : 'none';
+                nextBtn.disabled = true; // Enable when answer selected
+                nextBtn.textContent = this.currentStep < 4 ? 'Next →' : 'Complete';
+            }
+        }
+        
+        // Initialize diagnostic system
+        let diagnosticFlow = new DiagnosticFlow();
+        
+        // Event handlers
+        document.getElementById('diagnosticBtn').addEventListener('click', function() {
+            diagnosticFlow.start();
+        });
+        
+        document.getElementById('prevBtn').addEventListener('click', function() {
+            // TODO: Implement previous question functionality
+            alert('Previous question functionality coming soon!');
+        });
+        
+        // Initialize QR code and auto-focus
+        window.addEventListener('load', function() {
+            document.getElementById('callReason').focus();
+            generateNewQR();
+        });
+    </script>
+</body>
+</html>
