@@ -58,7 +58,7 @@ const FrontierSupportChat = () => {
     setTimeout(() => {
       setCustomerInfo({
         customerId: 'CUST-12345',
-        name: 'John Smith',
+        name: '',
         email: authEmail,
         phone: authPhone,
         accountStatus: 'Active',

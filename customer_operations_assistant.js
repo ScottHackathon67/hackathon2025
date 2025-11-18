@@ -33,11 +33,11 @@ const FrontierOpsAssistant = () => {
     setTimeout(async () => {
       // Simulate automatic customer identification
       const mockCustomer = {
-        name: 'Sarah Johnson',
-        accountNumber: 'FTR-8842-5519',
-        address: '1847 Maple Street, Columbus, OH',
-        plan: 'Frontier Fiber 500 Mbps',
-        phoneNumber: '(614) 555-0123'
+        name: '',
+        accountNumber: '',
+        address: '',
+        plan: '',
+        phoneNumber: ''
       };
       
       setCustomerData(mockCustomer);

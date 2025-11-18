@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Diagnostics Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .demo-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .button {
+            background: #FF0000;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .button:hover {
+            background: #cc0000;
+        }
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .status.running {
+            background: #FEF3C7;
+            color: #92400E;
+            border: 1px solid #F59E0B;
+        }
+        .status.failed {
+            background: #FEF2F2;
+            color: #991B1B;
+            border: 1px solid #DC2626;
+        }
+        .results {
+            background: #F9FAFB;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #6B7280;
+        }
+        .results h3 {
+            margin-top: 0;
+            color: #374151;
+        }
+        .result-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #E5E7EB;
+        }
+        .failure {
+            border-left: 4px solid #DC2626;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🔧 Network Diagnostics Demo</h1>
+        <p>This demo shows how the network diagnostics system generates connectivity failure scenarios and auto-correct attempts.</p>
+        
+        <button class="button" onclick="runDiagnosticDemo()">Run Network Diagnostics</button>
+        <button class="button" onclick="clearResults()">Clear Results</button>
+        
+        <div id="status"></div>
+        <div id="results"></div>
+    </div>
+
+    <script src="networkDiagnostics.js"></script>
+    <script>
+        async function runDiagnosticDemo() {
+            const statusDiv = document.getElementById('status');
+            const resultsDiv = document.getElementById('results');
+            
+            statusDiv.className = 'status running';
+            statusDiv.textContent = '🔄 Running network diagnostics...';
+            resultsDiv.innerHTML = '';
+            
+            const simulator = new NetworkDiagnosticSimulator();
+            
+            try {
+                const diagnosticData = await simulator.simulateDiagnosticProcess((progress) => {
+                    if (!progress.complete) {
+                        statusDiv.textContent = `🔄 ${progress.message} (${progress.progress}%)`;
+                    }
+                });
+                
+                // Update status
+                statusDiv.className = 'status failed';
+                statusDiv.textContent = '🔴 CONNECTIVITY FAILED - Network diagnostics complete';
+                
+                // Display results
+                displayResults(diagnosticData);
+                
+            } catch (error) {
+                statusDiv.className = 'status failed';
+                statusDiv.textContent = '❌ Diagnostic error occurred';
+                console.error('Demo error:', error);
+            }
+        }
+        
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            
+            resultsDiv.innerHTML = `
+                <div class="results">
+                    <h3>🔴 Network Diagnostic Results</h3>
+                    <div class="result-item failure">
+                        <strong>Status:</strong> ${data.status}<br>
+                        <strong>Diagnostic ID:</strong> ${data.diagnosticId}<br>
+                        <strong>Timestamp:</strong> ${new Date(data.timestamp).toLocaleString()}
+                    </div>
+                    
+                    <h4>Test Results:</h4>
+                    <div class="result-item failure">
+                        <strong>Ping Test:</strong> ${data.testResults.pingTest.status}<br>
+                        <strong>Packet Loss:</strong> ${data.testResults.pingTest.packetLoss}%<br>
+                        <strong>Details:</strong> ${data.testResults.pingTest.details}
+                    </div>
+                    
+                    <div class="result-item failure">
+                        <strong>Signal Quality:</strong> ${data.testResults.signalQuality.status}<br>
+                        <strong>Signal Strength:</strong> ${data.testResults.signalQuality.signalStrength}%<br>
+                        <strong>SNR Ratio:</strong> ${data.testResults.signalQuality.snrRatio} dB
+                    </div>
+                    
+                    <div class="result-item failure">
+                        <strong>Equipment Status:</strong> ${data.testResults.equipmentStatus.status}<br>
+                        <strong>Modem Status:</strong> ${data.testResults.equipmentStatus.modemStatus}<br>
+                        <strong>Last Seen:</strong> ${new Date(data.testResults.equipmentStatus.lastSeen).toLocaleString()}
+                    </div>
+                    
+                    <h4>Root Cause Analysis:</h4>
+                    <div class="result-item failure">
+                        <strong>Category:</strong> ${data.rootCause.category}<br>
+                        <strong>Technical Code:</strong> ${data.rootCause.technicalCode}<br>
+                        <strong>Confidence:</strong> ${data.rootCause.confidence}%<br>
+                        <strong>Description:</strong> ${data.rootCause.description}
+                    </div>
+                    
+                    <h4>Auto-Correct Attempt:</h4>
+                    <div class="result-item failure">
+                        <strong>Action:</strong> ${data.autoCorrectAttempt.step}<br>
+                        <strong>Description:</strong> ${data.autoCorrectAttempt.description}<br>
+                        <strong>Duration:</strong> ${data.autoCorrectAttempt.duration}<br>
+                        <strong>Result:</strong> <span style="color: #DC2626; font-weight: bold;">FAILED</span><br>
+                        <strong>Reason:</strong> ${data.autoCorrectAttempt.reason}
+                    </div>
+                    
+                    <h4>Recommended Actions:</h4>
+                    ${data.recommendedActions.map((action, index) => `
+                        <div class="result-item" style="border-left: 4px solid #F59E0B;">
+                            <strong>Action ${index + 1}:</strong> ${action}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        function clearResults() {
+            document.getElementById('status').innerHTML = '';
+            document.getElementById('results').innerHTML = '';
+        }
+    </script>
+</body>
+</html>

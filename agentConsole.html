@@ -125,7 +125,7 @@
         /* Grid Layout */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
             margin-bottom: 20px;
         }
@@ -837,7 +837,7 @@
                 <button class="btn btn-outline" tabindex="14">
                     <span id="btn-escalate">📤 Escalate to Specialist</span>
                 </button>
-                <button class="btn btn-outline" onclick="requestVideoInterpreter()" tabindex="15">
+                <button class="btn btn-outline" id="asl-interpreter-btn" onclick="requestVideoInterpreter()" tabindex="15" style="display: none;">
                     <span id="btn-interpreter">🧏 Request an ASL Interpreter Video Call</span>
                 </button>
             </div>
@@ -1080,6 +1080,22 @@
         </div>
     </div>
 
+    <!-- Alert Modal -->
+    <div class="modal" id="alert-modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 id="alert-modal-title">Information</h3>
+                <button class="close-modal" onclick="closeAlertModal()">×</button>
+            </div>
+            <div id="alert-modal-body" style="padding: 20px 0;">
+                <!-- Alert message will be inserted here -->
+            </div>
+            <div style="text-align: center; padding-top: 15px; border-top: 1px solid #E5E7EB;">
+                <button class="btn btn-primary" onclick="closeAlertModal()">OK</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Language metadata
         const languageMetadata = {
@@ -1255,7 +1271,7 @@
                     { type: 'customer', text: 'Teléfono', translation: 'Phone' }
                 ]
             },
-            'french-internet': {
+                      /*  'french-internet': {
                 name: 'Pierre Dubois',
                 tn: '555-345-6789',
                 account: 'FTR-3456782-02',
@@ -1269,7 +1285,7 @@
                     { type: 'ai', text: 'Bienvenue chez Frontier.', translation: 'Welcome to Frontier.' },
                     { type: 'customer', text: '[Dit "Français"]', translation: '[Said "Français"]' }
                 ]
-            },
+            },*/
             'hearing-impaired': {
                 name: 'David Williams',
                 tn: '555-999-8888',
@@ -1287,6 +1303,7 @@
                     { type: 'customer', text: '[TTY] Yes', translation: '[TTY] Yes' }
                 ]
             },
+            /*
             'german-tv': {
                 name: 'Hans Mueller',
                 tn: '555-456-7890',
@@ -1421,7 +1438,7 @@
                     { type: 'ai', text: 'Welcome to Frontier.', translation: 'Welcome to Frontier.' },
                     { type: 'customer', text: '[Said "English"]', translation: '[Said "English"]' }
                 ]
-            }
+            }*/
         };
 
         let currentTestCase = 'spanish-phone';
@@ -1643,9 +1660,15 @@
                     document.getElementById('test-case-selector').value = firstKey;
                     applyTestCase(databaseTestCases[firstKey]);
                     
-                    alert(`✅ Loaded ${data.testCases.length} test cases from database!`);
+                    showAlertModal(
+                        '✅ Database Load Successful',
+                        `Successfully loaded ${data.testCases.length} test cases from database!`
+                    );
                 } else {
-                    alert('No test cases found in database.');
+                    showAlertModal(
+                        'ℹ️ No Test Cases Found',
+                        'No test cases were found in the database.'
+                    );
                 }
             } catch (error) {
                 console.error('Error loading from database:', error);
@@ -1662,7 +1685,11 @@
                     errorMsg += '\n\nPlease make sure:\n1. The server is running (node server.js)\n2. You are accessing the page via http://localhost:3000\n3. The server is not blocked by firewall';
                 }
                 
-                alert(errorMsg);
+                showAlertModal(
+                    '❌ Database Load Error',
+                    errorMsg,
+                    true // isError = true for red text
+                );
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Load from Database';
@@ -1713,7 +1740,17 @@
                 applyTestCase(testCases[currentTestCase]);
             } else {
                 console.error('Test case not found:', currentTestCase);
+                return;
             }
+            
+            // Automatically trigger network diagnostics after loading test case
+            setTimeout(() => {
+                if (typeof window.runNetworkDiagnostics === 'function') {
+                    window.runNetworkDiagnostics();
+                } else {
+                    console.error('Network diagnostics function not available');
+                }
+            }, 2000); // Wait 2 seconds after loading test case
         }
 
         function randomTestCase() {
@@ -1722,7 +1759,10 @@
             const keys = Object.keys(allTestCases);
             
             if (keys.length === 0) {
-                alert('No test cases available. Load from database first.');
+                showAlertModal(
+                    '⚠️ No Test Cases Available',
+                    'No test cases are currently available. Please load test cases from the database first.'
+                );
                 return;
             }
             
@@ -1752,6 +1792,17 @@
                     card.classList.add('active');
                 }
             });
+
+            // Show/hide ASL interpreter button based on test case
+            const aslButton = document.getElementById('asl-interpreter-btn');
+            if (aslButton) {
+                // Check if this is a hearing-impaired test case
+                const isHearingImpaired = testCase.language && testCase.language.includes('TTY') || 
+                                        testCase.languageMethod && testCase.languageMethod.includes('TTY') ||
+                                        currentTestCase === 'hearing-impaired';
+                
+                aslButton.style.display = isHearingImpaired ? 'block' : 'none';
+            }
 
             const logContainer = document.getElementById('communication-log');
             logContainer.innerHTML = '';
@@ -1828,14 +1879,36 @@
             document.getElementById('transcript-modal').classList.remove('active');
         }
 
+        // Alert Modal Functions
+        function showAlertModal(title, message, isError = false) {
+            const modal = document.getElementById('alert-modal');
+            const titleElement = document.getElementById('alert-modal-title');
+            const bodyElement = document.getElementById('alert-modal-body');
+            
+            titleElement.textContent = title;
+            bodyElement.innerHTML = `<p style="margin: 0; white-space: pre-line; line-height: 1.6; ${isError ? 'color: #DC2626;' : ''}">${message}</p>`;
+            
+            modal.classList.add('active');
+        }
+
+        function closeAlertModal() {
+            document.getElementById('alert-modal').classList.remove('active');
+        }
+
         function startDiagnostics() {
             const testCase = testCases[currentTestCase];
-            alert(`🔧 Starting diagnostics for:\n\nCustomer: ${testCase.name}\nService: ${testCase.serviceName}\nIssue: ${testCase.issue}\n\nDiagnostics will take 30-60 seconds...`);
+            showAlertModal(
+                '🔧 Starting Diagnostics',
+                `Starting diagnostics for:\n\nCustomer: ${testCase.name}\nService: ${testCase.serviceName}\nIssue: ${testCase.issue}\n\nDiagnostics will take 30-60 seconds...`
+            );
         }
 
         function requestVideoInterpreter() {
             const testCase = testCases[currentTestCase];
-            alert(`🧏 ASL Interpreter Requested:\n\nCustomer: ${testCase.name}\nPreferred Language: ${testCase.language}\nSelection Method: ${testCase.languageMethod}\n\nA video ASL interpreter will join shortly.`);
+            showAlertModal(
+                '🧏 ASL Interpreter Requested',
+                `ASL Interpreter has been requested:\n\nCustomer: ${testCase.name}\nPreferred Language: ${testCase.language}\nSelection Method: ${testCase.languageMethod}\n\nA video ASL interpreter will join shortly.`
+            );
         }
 
         function setHistoryPlaceholder() {
@@ -1902,7 +1975,7 @@
                         // Analyze history
                         const issueCounts = {};
                         data.history.forEach(ticket => {
-                            const issue = ticket.symptom_description || ticket.description || 'Unknown issue';
+                            const issue = ticket.symptom_description || 'Unknown issue';
                             issueCounts[issue] = (issueCounts[issue] || 0) + 1;
                         });
                         
@@ -1925,7 +1998,7 @@
                         data.history.slice(0, 5).forEach(ticket => {
                             hotspots.push({
                                 badge: ticket.severity || 'MEDIUM',
-                                detail: `${ticket.symptom_description || ticket.description || 'Issue'} - ${new Date(ticket.timestamp_created).toLocaleDateString()}`
+                                detail: `${ticket.symptom_description || 'Issue'} - ${new Date(ticket.timestamp_created).toLocaleDateString()}`
                             });
                         });
                         
@@ -2204,6 +2277,9 @@
         // Add keyboard event listeners
         document.addEventListener('keydown', handleKeyboardNavigation);
     </script>
+
+    <!-- Network Diagnostics Script -->
+    <script src="networkDiagnostics.js"></script>
 
 </body>
 </html>

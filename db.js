@@ -19,11 +19,10 @@ const SCHEMA_NAME = 'team_scrappy_minds';
 
 // Test the connection
 pool.on('connect', () => {
-  console.log('✅ Connected to PostgreSQL database');
+  // Connected to PostgreSQL database
 });
 
 pool.on('error', (err) => {
-  console.error('❌ Unexpected error on idle client', err);
   process.exit(-1);
 });
 
@@ -36,10 +35,8 @@ const query = async (text, params) => {
     const schemaPrefixedText = text.replace(/\b(customers|services|test_cases|messages|service_history|support_tickets)\b(?![^\s]*\.)/g, `${SCHEMA_NAME}.$1`);
     const res = await pool.query(schemaPrefixedText, params);
     const duration = Date.now() - start;
-    console.log('Executed query', { text: schemaPrefixedText.substring(0, 100), duration, rows: res.rowCount });
     return res;
   } catch (error) {
-    console.error('Database query error:', error);
     throw error;
   }
 };
@@ -52,8 +49,7 @@ const getClient = async () => {
   
   // Set a timeout of 5 seconds, after which we will log this client's last query
   const timeout = setTimeout(() => {
-    console.error('A client has been checked out for more than 5 seconds!');
-    console.error(`The last executed query on this client was: ${client.lastQuery}`);
+    // Client checked out for more than 5 seconds
   }, 5000);
   
   // Monkey patch the query method to log the last query executed
@@ -75,7 +71,7 @@ const getClient = async () => {
 // Test connection function
 const testConnection = async () => {
   try {
-    const result = await query('SELECT NOW()');
+    const result = await query('SELECT NOW() as current_time');
     console.log('✅ Database connection test successful:', result.rows[0]);
     return true;
   } catch (error) {

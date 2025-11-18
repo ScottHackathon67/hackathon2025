@@ -12,7 +12,7 @@ async function createDatabase() {
   });
 
   try {
-    console.log('🔧 Creating database: team_scrappy_minds...');
+    // Creating database: team_scrappy_minds...
     
     // Check if database exists
     const checkDb = await adminPool.query(
@@ -21,9 +21,9 @@ async function createDatabase() {
     
     if (checkDb.rows.length === 0) {
       await adminPool.query('CREATE DATABASE team_scrappy_minds');
-      console.log('✅ Database created successfully!');
+      // Database created successfully!
     } else {
-      console.log('ℹ️  Database already exists.');
+      // Database already exists.
     }
     
     await adminPool.end();
@@ -37,7 +37,7 @@ async function createDatabase() {
       database: 'team_scrappy_minds'
     });
     
-    console.log('📋 Creating tables...');
+    // Creating tables...
     
     // Create customers table
     await dbPool.query(`
@@ -117,12 +117,11 @@ async function createDatabase() {
     await dbPool.query('CREATE INDEX IF NOT EXISTS idx_messages_test_case ON messages(test_case_id)');
     await dbPool.query('CREATE INDEX IF NOT EXISTS idx_service_history_customer ON service_history(customer_id)');
     
-    console.log('✅ Tables created successfully!');
+    // Tables created successfully!
     
     await dbPool.end();
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error:', error.message);
     process.exit(1);
   }
 }

@@ -60,10 +60,12 @@ app.get('/api/test-cases', async (req, res) => {
         c.service_plan,
         c.location,
         c.subscription_tier,
+        c.email,
+        c.industry,
         COALESCE(
           (SELECT COUNT(*) FROM support_tickets st 
            WHERE st.customer_id = c.customer_id 
-           AND st.status != 'resolved'), 
+           AND st.status NOT IN ('Closed', 'Resolved')), 
           0
         ) as open_tickets,
         (SELECT ticket_id FROM support_tickets st 
@@ -74,34 +76,50 @@ app.get('/api/test-cases', async (req, res) => {
          ORDER BY st.timestamp_created DESC LIMIT 1) as latest_issue
       FROM customers c
       WHERE c.account_status IN ('Active', 'Pending')
-      ORDER BY c.customer_id
+      ORDER BY c.created_at DESC, c.customer_id
       LIMIT $1 OFFSET $2
     `, [parseInt(limit), parseInt(offset)]);
     
     // Format customers as test cases
     const testCases = customers.rows.map((customer, index) => {
-      // Generate test_case_id
-      const testCaseId = `db-${customer.customer_id.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+      // Generate test_case_id from UUID (use first 8 chars for shorter ID)
+      const shortId = customer.customer_id.substring(0, 8);
+      const testCaseId = `db-${shortId}`;
       
       // Map service plan to service type
       let serviceType = 'internet';
       let serviceName = 'Internet';
-      if (customer.service_plan?.toLowerCase().includes('phone')) {
+      const planLower = (customer.service_plan || '').toLowerCase();
+      if (planLower.includes('phone') || planLower.includes('voice')) {
         serviceType = 'phone';
         serviceName = 'Home Phone';
-      } else if (customer.service_plan?.toLowerCase().includes('tv')) {
+      } else if (planLower.includes('tv') || planLower.includes('television')) {
         serviceType = 'tv';
         serviceName = 'TV Service';
-      } else if (customer.service_plan?.toLowerCase().includes('mobile')) {
+      } else if (planLower.includes('mobile') || planLower.includes('wireless')) {
         serviceType = 'mobile';
         serviceName = 'Mobile';
+      } else if (planLower.includes('fiber')) {
+        serviceType = 'internet';
+        serviceName = 'Fiber Internet';
       }
       
-      // Generate phone number if missing
-      const phoneNumber = customer.contact_phone || `555-${String(index + 100).padStart(3, '0')}-${String(index + 2000).padStart(4, '0')}`;
+      // Clean phone number format
+      let phoneNumber = customer.contact_phone || '';
+      // Remove common formatting, keep only digits
+      phoneNumber = phoneNumber.replace(/[^\d]/g, '');
+      // Format as XXX-XXX-XXXX if we have 10 digits
+      if (phoneNumber.length === 10) {
+        phoneNumber = `${phoneNumber.substring(0, 3)}-${phoneNumber.substring(3, 6)}-${phoneNumber.substring(6)}`;
+      } else if (phoneNumber.length === 11 && phoneNumber.startsWith('1')) {
+        phoneNumber = `${phoneNumber.substring(1, 4)}-${phoneNumber.substring(4, 7)}-${phoneNumber.substring(7)}`;
+      } else if (!phoneNumber) {
+        // Generate fallback phone number
+        phoneNumber = `555-${String(index + 100).padStart(3, '0')}-${String(index + 2000).padStart(4, '0')}`;
+      }
       
-      // Generate account number
-      const accountNumber = customer.customer_id || `FTR-${String(index + 1000000)}-01`;
+      // Use customer_id as account number (it's now a UUID)
+      const accountNumber = customer.customer_id;
       
       // Default language (can be enhanced later)
       const languageCode = 'en';
@@ -123,8 +141,10 @@ app.get('/api/test-cases', async (req, res) => {
         serviceName,
         issue,
         customerId: customer.customer_id,
-        location: customer.location,
-        servicePlan: customer.service_plan,
+        location: customer.location || 'Unknown',
+        servicePlan: customer.service_plan || 'Unknown',
+        email: customer.email,
+        industry: customer.industry,
         openTickets: parseInt(customer.open_tickets) || 0,
         // Default messages (can be enhanced with actual conversation history)
         messages: [
@@ -150,7 +170,6 @@ app.get('/api/test-cases', async (req, res) => {
       offset: parseInt(offset)
     });
   } catch (error) {
-    console.error('Error fetching test cases:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch test cases',
@@ -166,7 +185,21 @@ app.get('/api/test-cases/:customerId', async (req, res) => {
     
     const customer = await query(`
       SELECT 
-        c.*,
+        c.customer_id,
+        c.customer_name,
+        c.contact_phone,
+        c.account_status,
+        c.service_plan,
+        c.location,
+        c.subscription_tier,
+        c.email,
+        c.industry,
+        c.service_address,
+        c.provisioned_bandwidth_down_mbps,
+        c.provisioned_bandwidth_up_mbps,
+        c.router_serial_number,
+        c.multi_site,
+        c.created_at,
         (SELECT ticket_id FROM support_tickets st 
          WHERE st.customer_id = c.customer_id 
          ORDER BY st.timestamp_created DESC LIMIT 1) as latest_ticket_id,
@@ -198,8 +231,18 @@ app.get('/api/test-cases/:customerId', async (req, res) => {
       serviceName = 'TV Service';
     }
     
-    const phoneNumber = c.contact_phone || '555-000-0000';
-    const accountNumber = c.customer_id || 'FTR-0000000-00';
+    // Clean phone number format
+    let phoneNumber = c.contact_phone || '';
+    phoneNumber = phoneNumber.replace(/[^\d]/g, '');
+    if (phoneNumber.length === 10) {
+      phoneNumber = `${phoneNumber.substring(0, 3)}-${phoneNumber.substring(3, 6)}-${phoneNumber.substring(6)}`;
+    } else if (phoneNumber.length === 11 && phoneNumber.startsWith('1')) {
+      phoneNumber = `${phoneNumber.substring(1, 4)}-${phoneNumber.substring(4, 7)}-${phoneNumber.substring(7)}`;
+    } else if (!phoneNumber) {
+      phoneNumber = '555-000-0000';
+    }
+    
+    const accountNumber = c.customer_id;
     
     const testCase = {
       testCaseId,
@@ -213,8 +256,10 @@ app.get('/api/test-cases/:customerId', async (req, res) => {
       serviceName,
       issue: c.latest_issue || 'Service interruption',
       customerId: c.customer_id,
-      location: c.location,
-      servicePlan: c.service_plan,
+      location: c.location || 'Unknown',
+      servicePlan: c.service_plan || 'Unknown',
+      email: c.email,
+      industry: c.industry,
       messages: [
         { 
           type: 'ai', 
@@ -234,7 +279,6 @@ app.get('/api/test-cases/:customerId', async (req, res) => {
       testCase
     });
   } catch (error) {
-    console.error('Error fetching test case:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch test case',
@@ -253,11 +297,11 @@ app.get('/api/customers/:customerId/history', async (req, res) => {
         ticket_id,
         severity,
         symptom_description,
-        description,
         status,
         timestamp_created,
-        resolved_at,
-        resolution_notes
+        resolution_notes,
+        notified_support,
+        linked_metrics_id
       FROM support_tickets
       WHERE customer_id = $1
       ORDER BY timestamp_created DESC
@@ -269,7 +313,6 @@ app.get('/api/customers/:customerId/history', async (req, res) => {
       history: history.rows
     });
   } catch (error) {
-    console.error('Error fetching customer history:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch customer history',
@@ -278,30 +321,6 @@ app.get('/api/customers/:customerId/history', async (req, res) => {
   }
 });
 
-// Example route to query database (for testing)
-app.get('/api/query', async (req, res) => {
-  try {
-    const { sql } = req.query;
-    if (!sql) {
-      return res.status(400).json({
-        success: false,
-        message: 'SQL query parameter is required'
-      });
-    }
-    const result = await query(sql);
-    res.json({
-      success: true,
-      rows: result.rows,
-      rowCount: result.rowCount
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Query execution failed',
-      error: error.message
-    });
-  }
-});
 
 const PORT = process.env.PORT || 3000;
 
@@ -309,5 +328,10 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log('Testing database connection...');
-  await testConnection();
+  const connected = await testConnection();
+  if (connected) {
+    console.log('✅ Database connection test successful');
+  } else {
+    console.log('❌ Database connection test failed - server will continue but database features may not work');
+  }
 });

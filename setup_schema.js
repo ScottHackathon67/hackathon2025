@@ -13,16 +13,16 @@ async function setupSchema() {
   });
 
   try {
-    console.log(`🔧 Setting up schema: ${SCHEMA_NAME}...`);
+    // Setting up schema: ${SCHEMA_NAME}...
     
     // Create schema if it doesn't exist
     await pool.query(`CREATE SCHEMA IF NOT EXISTS ${SCHEMA_NAME}`);
-    console.log(`✅ Schema '${SCHEMA_NAME}' created/verified`);
+    // Schema '${SCHEMA_NAME}' created/verified
     
     // Set search_path for this session
     await pool.query(`SET search_path TO ${SCHEMA_NAME}, public`);
     
-    console.log('📋 Creating tables...');
+    // Creating tables...
     
     // Create customers table
     await pool.query(`
@@ -106,17 +106,15 @@ async function setupSchema() {
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_messages_test_case ON ${SCHEMA_NAME}.messages(test_case_id)`);
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_service_history_customer ON ${SCHEMA_NAME}.service_history(customer_id)`);
     
-    console.log('✅ Tables created successfully!');
+    // Tables created successfully!
     
     // Check if data already exists
     const customerCount = await pool.query(`SELECT COUNT(*) as count FROM ${SCHEMA_NAME}.customers`);
-    console.log(`📊 Current customer records: ${customerCount.rows[0].count}`);
+    // Current customer records: ${customerCount.rows[0].count}
     
     await pool.end();
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error:', error.message);
-    console.error(error);
     await pool.end();
     process.exit(1);
   }
