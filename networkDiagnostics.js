@@ -874,18 +874,8 @@ function displayDiagnosticResults(data) {
         diagnosticHeader.onclick = () => showDetailedDiagnosticModal(data);
         logContainer.appendChild(diagnosticHeader);
         
-        // Add auto-correct attempt
-        const autoCorrectEntry = document.createElement('div');
-        autoCorrectEntry.className = 'log-entry sent';
-        autoCorrectEntry.innerHTML = `
-            <div style="flex: 1;">
-                <div style="font-weight: 600; font-size: 13px;">
-                    🔧 Auto-Correct Attempted: ${data.autoCorrectAttempt.step}
-                </div>
-                <div class="log-time">Failed - ${data.autoCorrectAttempt.reason}</div>
-            </div>
-        `;
-        logContainer.appendChild(autoCorrectEntry);
+        // Note: Auto-correct workflow will be handled separately by the auto-correct panel
+        // The old auto-correct attempt from diagnostic data is informational only
         
         // Add recommended actions
         const actionsEntry = document.createElement('div');
@@ -905,6 +895,13 @@ function displayDiagnosticResults(data) {
     
     // Update next steps with actual diagnostic recommendations
     updateNextStepsWithDiagnostic(data);
+    
+    // Trigger auto-correct analysis
+    if (typeof analyzeAutoCorrectOptions === 'function') {
+        // Get customer ID from test case if available
+        const customerId = window.currentTestCase?.customerId || null;
+        analyzeAutoCorrectOptions(data, customerId);
+    }
 }
 
 // Function to show detailed diagnostic modal

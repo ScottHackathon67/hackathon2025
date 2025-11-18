@@ -854,6 +854,56 @@
             </div>
         </div>
 
+        <!-- Auto-Correct Workflow Panel -->
+        <div class="card" id="auto-correct-card" style="display: none;">
+            <div class="card-header">
+                <span class="card-icon">🔧</span>
+                <h2>Auto-Correct Workflow</h2>
+            </div>
+            <div id="auto-correct-content">
+                <div id="auto-correct-pending" style="text-align: center; padding: 20px; color: #6B7280;">
+                    <p>Waiting for diagnostic results...</p>
+                </div>
+                <div id="auto-correct-available" style="display: none;">
+                    <div style="background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                        <div style="font-weight: 600; color: #92400E; margin-bottom: 8px;">
+                            ✨ Auto-Correct Available
+                        </div>
+                        <div id="auto-correct-recommendation" style="color: #78350F; font-size: 14px;">
+                            <!-- Recommendation will be populated here -->
+                        </div>
+                    </div>
+                    <div id="auto-correct-actions" style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <button class="btn btn-primary" id="btn-approve-auto-correct" onclick="approveAutoCorrect()" style="flex: 1;">
+                            ✓ Approve & Execute
+                        </button>
+                        <button class="btn btn-outline" id="btn-view-alternatives" onclick="showAutoCorrectAlternatives()" style="flex: 1;">
+                            🔍 View Alternatives
+                        </button>
+                        <button class="btn btn-outline" id="btn-dismiss-auto-correct" onclick="dismissAutoCorrect()" style="flex: 1;">
+                            ✕ Dismiss
+                        </button>
+                    </div>
+                </div>
+                <div id="auto-correct-executing" style="display: none;">
+                    <div style="background: #DBEAFE; border-left: 4px solid #3B82F6; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                        <div style="font-weight: 600; color: #1E40AF; margin-bottom: 8px;">
+                            ⚙️ Executing Auto-Correct...
+                        </div>
+                        <div id="auto-correct-progress" style="color: #1E3A8A; font-size: 14px; margin-bottom: 10px;">
+                            Initializing...
+                        </div>
+                        <div style="background: #E5E7EB; border-radius: 4px; height: 8px; overflow: hidden;">
+                            <div id="auto-correct-progress-bar" style="background: #3B82F6; height: 100%; width: 0%; transition: width 0.3s;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="auto-correct-result" style="display: none;">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+        </div>
+
         <!-- Second Grid: Next Steps + Communication -->
         <div class="dashboard-grid">
 
@@ -1774,6 +1824,9 @@
         }
 
         function applyTestCase(testCase) {
+            // Store test case globally for auto-correct workflow
+            window.currentTestCase = testCase;
+            
             document.getElementById('customer-name').textContent = testCase.name;
             document.getElementById('customer-tn').innerHTML = `${testCase.tn} <span style="color: #10B981; font-weight: 600;" id="confirmed-badge">${translations[currentDashboardLang]['confirmed.badge']}</span>`;
             document.getElementById('customer-account').textContent = testCase.account;
@@ -2362,6 +2415,439 @@
 
     <!-- Network Diagnostics Script -->
     <script src="networkDiagnostics.js"></script>
+    
+    <!-- Auto-Correct Engine Script -->
+    <script src="autoCorrectEngine.js"></script>
+    
+    <!-- Auto-Correct Workflow Integration -->
+    <script>
+        let currentDiagnosticData = null;
+        let currentAutoCorrectOptions = null;
+        let currentCustomerId = null;
+
+        // Function to analyze diagnostic results and show auto-correct options
+        async function analyzeAutoCorrectOptions(diagnosticData, customerId) {
+            currentDiagnosticData = diagnosticData;
+            currentCustomerId = customerId;
+            
+            const card = document.getElementById('auto-correct-card');
+            const pending = document.getElementById('auto-correct-pending');
+            const available = document.getElementById('auto-correct-available');
+            const executing = document.getElementById('auto-correct-executing');
+            const result = document.getElementById('auto-correct-result');
+            
+            // Show card
+            card.style.display = 'block';
+            pending.style.display = 'none';
+            available.style.display = 'none';
+            executing.style.display = 'none';
+            result.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/auto-correct/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ diagnosticData })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.isAvailable && data.recommendedAction) {
+                    currentAutoCorrectOptions = data;
+                    showAutoCorrectRecommendation(data.recommendedAction, data.applicableActions);
+                } else {
+                    // No auto-correct available
+                    pending.innerHTML = '<p style="color: #6B7280;">No auto-correct actions available for this issue. Manual intervention required.</p>';
+                    pending.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error analyzing auto-correct options:', error);
+                pending.innerHTML = '<p style="color: #DC2626;">Error analyzing auto-correct options. Please try again.</p>';
+                pending.style.display = 'block';
+            }
+        }
+
+        // Show auto-correct recommendation
+        function showAutoCorrectRecommendation(recommendedAction, allActions) {
+            const available = document.getElementById('auto-correct-available');
+            const recommendation = document.getElementById('auto-correct-recommendation');
+            
+            recommendation.innerHTML = `
+                <div style="margin-bottom: 10px;">
+                    <strong>Recommended Action:</strong> ${recommendedAction.name}
+                </div>
+                <div style="margin-bottom: 10px; font-size: 13px;">
+                    ${recommendedAction.description}
+                </div>
+                <div style="font-size: 12px; color: #92400E;">
+                    Estimated Duration: ${recommendedAction.duration} seconds | 
+                    Success Rate: ${recommendedAction.successRate}%
+                </div>
+            `;
+            
+            // Store recommended action ID for execution
+            available.dataset.recommendedActionId = recommendedAction.id;
+            available.style.display = 'block';
+            
+            // Add to communication log
+            addAutoCorrectLogEntry(recommendedAction);
+        }
+
+        // Add auto-correct entry to communication log
+        function addAutoCorrectLogEntry(action) {
+            const logContainer = document.getElementById('communication-log');
+            if (!logContainer) return;
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry received';
+            logEntry.style.borderLeftColor = '#F59E0B';
+            logEntry.innerHTML = `
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; font-size: 13px; color: #F59E0B;">
+                        🔧 Auto-Correct Available: ${action.name}
+                    </div>
+                    <div class="log-time">${new Date().toLocaleString()} • ${action.description}</div>
+                </div>
+            `;
+            logContainer.appendChild(logEntry);
+        }
+
+        // Approve and execute auto-correct
+        async function approveAutoCorrect() {
+            if (!currentDiagnosticData || !currentAutoCorrectOptions) {
+                return;
+            }
+            
+            const actionId = document.getElementById('auto-correct-available').dataset.recommendedActionId;
+            if (!actionId) {
+                return;
+            }
+            
+            const available = document.getElementById('auto-correct-available');
+            const executing = document.getElementById('auto-correct-executing');
+            const progress = document.getElementById('auto-correct-progress');
+            const progressBar = document.getElementById('auto-correct-progress-bar');
+            
+            available.style.display = 'none';
+            executing.style.display = 'block';
+            
+            // Add approval to communication log
+            const logContainer = document.getElementById('communication-log');
+            if (logContainer) {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry sent';
+                logEntry.innerHTML = `
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 13px;">
+                            ✓ Auto-Correct Approved
+                        </div>
+                        <div class="log-time">${new Date().toLocaleString()} • Executing...</div>
+                    </div>
+                `;
+                logContainer.appendChild(logEntry);
+            }
+            
+            try {
+                // Simulate progress updates
+                const progressSteps = [
+                    { progress: 25, message: 'Initiating auto-correct action...' },
+                    { progress: 50, message: 'Executing remote fix...' },
+                    { progress: 75, message: 'Verifying changes...' },
+                    { progress: 100, message: 'Completing...' }
+                ];
+                
+                for (const step of progressSteps) {
+                    progress.textContent = step.message;
+                    progressBar.style.width = step.progress + '%';
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+                
+                // Execute the action
+                const response = await fetch('/api/auto-correct/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        actionId,
+                        diagnosticData: currentDiagnosticData,
+                        customerId: currentCustomerId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAutoCorrectResult(data.result);
+                } else {
+                    showAutoCorrectError('Failed to execute auto-correct action');
+                }
+            } catch (error) {
+                console.error('Error executing auto-correct:', error);
+                showAutoCorrectError('Error executing auto-correct: ' + error.message);
+            }
+        }
+
+        // Show auto-correct execution result
+        function showAutoCorrectResult(result) {
+            const executing = document.getElementById('auto-correct-executing');
+            const resultDiv = document.getElementById('auto-correct-result');
+            const progressBar = document.getElementById('auto-correct-progress-bar');
+            
+            executing.style.display = 'none';
+            resultDiv.style.display = 'block';
+            
+            if (result.success) {
+                resultDiv.innerHTML = `
+                    <div style="background: #D1FAE5; border-left: 4px solid #10B981; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                        <div style="font-weight: 600; color: #065F46; margin-bottom: 8px;">
+                            ✅ Auto-Correct Successful
+                        </div>
+                        <div style="color: #047857; font-size: 14px; margin-bottom: 10px;">
+                            ${result.result}
+                        </div>
+                        <div style="font-size: 12px; color: #059669;">
+                            Execution Time: ${result.executionTime} seconds | Confidence: ${result.confidence}%
+                        </div>
+                    </div>
+                    <div style="background: #F0FDF4; padding: 15px; border-radius: 6px;">
+                        <div style="font-weight: 600; margin-bottom: 10px; color: #065F46;">Next Steps:</div>
+                        <ul style="margin: 0; padding-left: 20px; color: #047857; font-size: 14px;">
+                            ${result.nextSteps.map(step => `<li>${step}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                
+                // Add success to communication log
+                addResultLogEntry(result, true);
+                
+                // Update status
+                const statusMain = document.getElementById('status-main');
+                const statusSub = document.getElementById('status-sub');
+                if (statusMain) {
+                    statusMain.textContent = '✅ AUTO-CORRECT SUCCESSFUL';
+                    statusMain.className = 'diagnostic-status';
+                    statusMain.style.color = '#10B981';
+                }
+                if (statusSub) {
+                    statusSub.textContent = result.result;
+                }
+            } else {
+                resultDiv.innerHTML = `
+                    <div style="background: #FEE2E2; border-left: 4px solid #DC2626; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                        <div style="font-weight: 600; color: #991B1B; margin-bottom: 8px;">
+                            ❌ Auto-Correct Failed
+                        </div>
+                        <div style="color: #B91C1C; font-size: 14px; margin-bottom: 10px;">
+                            ${result.reason || 'Unknown error occurred'}
+                        </div>
+                        <div style="font-size: 12px; color: #DC2626;">
+                            Execution Time: ${result.executionTime} seconds
+                        </div>
+                    </div>
+                    ${result.alternativeActions && result.alternativeActions.length > 0 ? `
+                        <div style="background: #FFFBEB; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                            <div style="font-weight: 600; margin-bottom: 10px; color: #92400E;">Alternative Actions Available:</div>
+                            ${result.alternativeActions.map(action => `
+                                <div style="padding: 10px; background: white; border-radius: 4px; margin-bottom: 8px; border-left: 3px solid #F59E0B;">
+                                    <div style="font-weight: 600; font-size: 14px; color: #78350F;">${action.name}</div>
+                                    <div style="font-size: 12px; color: #92400E; margin-top: 4px;">${action.description} (${action.successRate}% success rate)</div>
+                                    <button class="btn btn-outline" onclick="executeAlternativeAction('${action.id}')" style="margin-top: 8px; font-size: 12px; padding: 6px 12px;">
+                                        Try This Action
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    <div style="background: #FEF2F2; padding: 15px; border-radius: 6px;">
+                        <div style="font-weight: 600; margin-bottom: 10px; color: #991B1B;">Next Steps:</div>
+                        <div style="color: #B91C1C; font-size: 14px;">
+                            ${result.nextAction || 'Manual intervention required. Please review diagnostic results and recommended actions.'}
+                        </div>
+                    </div>
+                `;
+                
+                // Add failure to communication log
+                addResultLogEntry(result, false);
+            }
+        }
+
+        // Show auto-correct error
+        function showAutoCorrectError(message) {
+            const executing = document.getElementById('auto-correct-executing');
+            const resultDiv = document.getElementById('auto-correct-result');
+            
+            executing.style.display = 'none';
+            resultDiv.style.display = 'block';
+            
+            resultDiv.innerHTML = `
+                <div style="background: #FEE2E2; border-left: 4px solid #DC2626; padding: 15px; border-radius: 6px;">
+                    <div style="font-weight: 600; color: #991B1B; margin-bottom: 8px;">
+                        ❌ Error
+                    </div>
+                    <div style="color: #B91C1C; font-size: 14px;">
+                        ${message}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Add result to communication log
+        function addResultLogEntry(result, success) {
+            const logContainer = document.getElementById('communication-log');
+            if (!logContainer) return;
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry ' + (success ? 'sent' : 'received');
+            logEntry.style.borderLeftColor = success ? '#10B981' : '#DC2626';
+            logEntry.innerHTML = `
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; font-size: 13px; color: ${success ? '#10B981' : '#DC2626'};">
+                        ${success ? '✅' : '❌'} Auto-Correct ${success ? 'Successful' : 'Failed'}: ${result.actionName}
+                    </div>
+                    <div class="log-time">${new Date().toLocaleString()} • ${success ? result.result : result.reason}</div>
+                </div>
+            `;
+            logContainer.appendChild(logEntry);
+        }
+
+        // Execute alternative action
+        async function executeAlternativeAction(actionId) {
+            if (!currentDiagnosticData) {
+                return;
+            }
+            
+            const available = document.getElementById('auto-correct-available');
+            const executing = document.getElementById('auto-correct-executing');
+            const result = document.getElementById('auto-correct-result');
+            
+            available.style.display = 'none';
+            result.style.display = 'none';
+            executing.style.display = 'block';
+            
+            const progress = document.getElementById('auto-correct-progress');
+            const progressBar = document.getElementById('auto-correct-progress-bar');
+            progressBar.style.width = '0%';
+            
+            try {
+                // Simulate progress
+                const progressSteps = [
+                    { progress: 25, message: 'Initiating alternative action...' },
+                    { progress: 50, message: 'Executing...' },
+                    { progress: 75, message: 'Verifying...' },
+                    { progress: 100, message: 'Completing...' }
+                ];
+                
+                for (const step of progressSteps) {
+                    progress.textContent = step.message;
+                    progressBar.style.width = step.progress + '%';
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+                
+                const response = await fetch('/api/auto-correct/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        actionId,
+                        diagnosticData: currentDiagnosticData,
+                        customerId: currentCustomerId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAutoCorrectResult(data.result);
+                } else {
+                    showAutoCorrectError('Failed to execute alternative action');
+                }
+            } catch (error) {
+                console.error('Error executing alternative action:', error);
+                showAutoCorrectError('Error: ' + error.message);
+            }
+        }
+
+        // Show alternative actions
+        function showAutoCorrectAlternatives() {
+            if (!currentAutoCorrectOptions || !currentAutoCorrectOptions.applicableActions) {
+                return;
+            }
+            
+            const alternatives = currentAutoCorrectOptions.applicableActions.slice(1); // Skip the recommended one
+            
+            if (alternatives.length === 0) {
+                alert('No alternative actions available.');
+                return;
+            }
+            
+            const modal = document.getElementById('transcript-modal');
+            const body = document.getElementById('transcript-body');
+            
+            if (!modal || !body) return;
+            
+            let content = `
+                <h4 style="margin-bottom: 15px; color: #F59E0B;">🔍 Alternative Auto-Correct Actions</h4>
+                <div style="background: #FFFBEB; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #F59E0B;">
+                    <p style="margin: 0; font-size: 14px;">
+                        The following alternative actions are available for this issue. Click "Try This Action" to execute any of them.
+                    </p>
+                </div>
+            `;
+            
+            alternatives.forEach((action, index) => {
+                content += `
+                    <div style="background: white; border: 1px solid #E5E7EB; border-radius: 8px; padding: 15px; margin: 10px 0;">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <span style="background: #F59E0B; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; margin-right: 10px;">
+                                ${index + 1}
+                            </span>
+                            <strong style="color: #78350F;">${action.name}</strong>
+                        </div>
+                        <div style="margin-left: 34px; margin-bottom: 10px; color: #92400E; font-size: 14px;">
+                            ${action.description}
+                        </div>
+                        <div style="margin-left: 34px; font-size: 12px; color: #92400E; margin-bottom: 10px;">
+                            Duration: ${action.duration} seconds | Success Rate: ${action.successRate}%
+                        </div>
+                        <div style="margin-left: 34px;">
+                            <button class="btn btn-primary" onclick="executeAlternativeAction('${action.id}'); document.getElementById('transcript-modal').classList.remove('active');" style="font-size: 12px; padding: 6px 12px;">
+                                Try This Action
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            body.innerHTML = content;
+            modal.classList.add('active');
+        }
+
+        // Dismiss auto-correct
+        function dismissAutoCorrect() {
+            const card = document.getElementById('auto-correct-card');
+            card.style.display = 'none';
+            
+            // Add dismissal to communication log
+            const logContainer = document.getElementById('communication-log');
+            if (logContainer) {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry sent';
+                logEntry.innerHTML = `
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 13px;">
+                            ✕ Auto-Correct Dismissed
+                        </div>
+                        <div class="log-time">${new Date().toLocaleString()} • Manual intervention preferred</div>
+                    </div>
+                `;
+                logContainer.appendChild(logEntry);
+            }
+        }
+    </script>
 
 </body>
 </html>

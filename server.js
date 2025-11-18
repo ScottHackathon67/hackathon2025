@@ -325,6 +325,69 @@ app.get('/api/customers/:customerId/history', async (req, res) => {
 const { setupIncidentRoutes } = require('./api_endpoints');
 setupIncidentRoutes(app);
 
+// Auto-Correct API endpoints
+const AutoCorrectEngine = require('./autoCorrectEngine');
+
+// Get applicable auto-correct actions for diagnostic results
+app.post('/api/auto-correct/analyze', async (req, res) => {
+  try {
+    const { diagnosticData } = req.body;
+    
+    if (!diagnosticData) {
+      return res.status(400).json({
+        success: false,
+        message: 'Diagnostic data is required'
+      });
+    }
+
+    const engine = new AutoCorrectEngine();
+    const applicableActions = engine.determineApplicableActions(diagnosticData);
+    const recommendedAction = engine.getRecommendedAction(diagnosticData);
+    const isAvailable = engine.isAutoCorrectAvailable(diagnosticData);
+
+    res.json({
+      success: true,
+      isAvailable,
+      applicableActions,
+      recommendedAction
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to analyze auto-correct options',
+      error: error.message
+    });
+  }
+});
+
+// Execute auto-correct action
+app.post('/api/auto-correct/execute', async (req, res) => {
+  try {
+    const { actionId, diagnosticData, customerId } = req.body;
+    
+    if (!actionId || !diagnosticData) {
+      return res.status(400).json({
+        success: false,
+        message: 'Action ID and diagnostic data are required'
+      });
+    }
+
+    const engine = new AutoCorrectEngine();
+    const result = await engine.executeAction(actionId, diagnosticData, customerId);
+
+    res.json({
+      success: true,
+      result
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to execute auto-correct action',
+      error: error.message
+    });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 
 // Test database connection on startup
