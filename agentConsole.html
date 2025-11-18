@@ -626,7 +626,7 @@
             <option value="hindi-mobile">Hindi Customer - Mobile Issue</option>
             <option value="arabic-internet">Arabic Customer - Internet Issue</option>
             <option value="english-all-services">English Customer - Internet Issue</option>
-            <option value="hearing-impaired">Hearing Impaired Customer (TTY)</option>
+            <option value="hearing-impaired">Deaf/Hard of Hearing Customer (TTY)</option>
         </select>
         <button onclick="loadTestCase()" id="load-btn">Load Test Case</button>
         <button onclick="randomTestCase()" id="random-btn">Random Test</button>
@@ -753,6 +753,9 @@
                 </button>
                 <button class="btn btn-outline">
                     <span id="btn-escalate">📤 Escalate to Specialist</span>
+                </button>
+                <button class="btn btn-outline" onclick="requestVideoInterpreter()">
+                    <span id="btn-interpreter">🧏 Request an ASL Interpereter Video Call</span>
                 </button>
             </div>
         </div>
@@ -938,7 +941,7 @@
 
                 <div class="language-option-item tty-option">
                     <span class="option-number" style="background: #D97706;">0</span>
-                    <span><strong>♿ TTY/Hearing Impaired</strong> - Press 0 for text relay service<br>
+                    <span><strong>♿ TTY/Deaf/Hard of Hearing</strong> - Press 0 for text relay service<br>
                     <em style="font-size: 12px;">Presione 0 para servicio de retransmisión de texto</em></span>
                 </div>
             </div>
@@ -959,7 +962,7 @@
             <div style="background: #FFF9E6; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #D97706;">
                 <h4 style="margin-bottom: 10px;">♿ Accessibility Features</h4>
                 <p style="font-size: 13px;">
-                    Pressing <strong>0</strong> or saying <strong>"TTY"</strong> will connect the customer to our text relay service for hearing impaired customers. This service provides real-time text communication with our support team.
+                    Pressing <strong>0</strong> or saying <strong>"TTY"</strong> will connect the customer to our text relay service for Deaf/Hard of Hearing customers. This service provides real-time text communication with our support team.
                 </p>
             </div>
         </div>
@@ -1030,6 +1033,7 @@
                 'btn.account': '👤 View Full Account',
                 'btn.history': '📋 View Service History',
                 'btn.escalate': '📤 Escalate to Specialist',
+                'btn.interpreter': '🧏 Request ASL Interpereter Video Call',
                 'card.next': 'Next Steps',
                 'step.1': 'Run diagnostics on Home Phone service',
                 'step.2': 'Check line quality and connection status',
@@ -1087,6 +1091,7 @@
                 'btn.account': '👤 Ver Cuenta Completa',
                 'btn.history': '📋 Ver Historial de Servicio',
                 'btn.escalate': '📤 Escalar a Especialista',
+                'btn.interpreter': '🧏 Solicitar videollamada con intérprete ASL',
                 'card.next': 'Próximos Pasos',
                 'step.1': 'Ejecutar diagnósticos en servicio de Teléfono Residencial',
                 'step.2': 'Verificar calidad de línea y estado de conexión',
@@ -1353,6 +1358,7 @@
                 'btn-account': 'btn.account',
                 'btn-history': 'btn.history',
                 'btn-escalate': 'btn.escalate',
+                'btn-interpreter': 'btn.interpreter',
                 'card-next': 'card.next',
                 'step-1': 'step.1',
                 'step-2': 'step.2',
@@ -1524,6 +1530,11 @@
         function startDiagnostics() {
             const testCase = testCases[currentTestCase];
             alert(`🔧 Starting diagnostics for:\n\nCustomer: ${testCase.name}\nService: ${testCase.serviceName}\nIssue: ${testCase.issue}\n\nDiagnostics will take 30-60 seconds...`);
+        }
+
+        function requestVideoInterpreter() {
+            const testCase = testCases[currentTestCase];
+            alert(`🧏 ASL Interpereter Requested:\n\nCustomer: ${testCase.name}\nPreferred Language: ${testCase.language}\nSelection Method: ${testCase.languageMethod}\n\nA video ASL interpreter will join shortly.`);
         }
 
         document.querySelectorAll('.modal').forEach(modal => {
