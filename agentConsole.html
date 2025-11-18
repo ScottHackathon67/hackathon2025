@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontier Agent Dashboard - Test Cases</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #FF0000 0%, #cc0000 100%);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .header-left p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Language Toggle in Header */
+        .header-language-toggle {
+            display: flex;
+            gap: 10px;
+            background: rgba(255,255,255,0.15);
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .lang-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.6);
+        }
+
+        .lang-btn.active {
+            background: white;
+            color: #FF0000;
+            border-color: white;
+        }
+
+        /* Test Case Selector */
+        .test-case-bar {
+            background: #000;
+            color: white;
+            padding: 15px 40px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            flex-wrap: wrap;
+        }
+
+        .test-case-bar label {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .test-case-bar select {
+            padding: 8px 15px;
+            border-radius: 6px;
+            border: 2px solid #FF0000;
+            background: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 250px;
+        }
+
+        .test-case-bar button {
+            padding: 8px 20px;
+            background: #FF0000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .test-case-bar button:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #e5e5e5;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-left: 10px;
+            color: #000;
+        }
+
+        .card-icon {
+            font-size: 24px;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .info-value {
+            color: #000;
+            font-size: 14px;
+        }
+
+        /* Diagnostic Status Box */
+        .diagnostic-box {
+            background: linear-gradient(135deg, #FFF 0%, #F9F9F9 100%);
+            border: 2px solid #E5E5E5;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .diagnostic-status {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .diagnostic-substatus {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Pulse Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Buttons */
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #FF0000;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background: #000;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .btn-outline {
+            background: white;
+            color: #000;
+            border: 2px solid #E5E5E5;
+        }
+
+        .btn-outline:hover {
+            border-color: #FF0000;
+            color: #FF0000;
+            transform: translateY(-2px);
+        }
+
+        /* Steps */
+        .steps-container {
+            counter-reset: step-counter;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #F9F9F9;
+            border-radius: 8px;
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 50px;
+        }
+
+        .step::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            width: 28px;
+            height: 28px;
+            background: #FF0000;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Checklist */
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #F9F9F9;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .checklist-item.completed {
+            background: #F0FDF4;
+            color: #059669;
+        }
+
+        .checklist-icon {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        /* Summary Card */
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            background: #F9F9F9;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .priority-medium {
+            color: #D97706;
+        }
+
+        .priority-high {
+            color: #DC2626;
+        }
+
+        /* Communication Log */
+        .log-entry {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #F9F9F9;
+            border-radius: 8px;
+            border-left: 4px solid #E5E5E5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .log-entry:hover {
+            background: #F0F0F0;
+            transform: translateX(5px);
+        }
+
+        .log-entry.sent {
+            border-left-color: #10B981;
+        }
+
+        .log-entry.received {
+            border-left-color: #3B82F6;
+        }
+
+        .log-time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        /* Agent Menu */
+        .agent-menu {
+            position: fixed;
+            top: 140px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .agent-button {
+            padding: 12px 20px;
+            background: white;
+            border: 2px solid #E5E5E5;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .service-card {
+            background: #F9F9F9;
+            border: 2px solid #E5E5E5;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .service-card.active {
+            background: #FFF5F5;
+            border-color: #FF0000;
+        }
+
+        .service-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .service-name {
+            font-weight: 600;
+            color: #000;
+            font-size: 14px;
+        }
+
+        .service-status {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #F0F0F0;
+        }
+
+        .close-modal {
+            background: #F0F0F0;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .close-modal:hover {
+            background: #FF0000;
+            color: white;
+        }
+
+        .message-block {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #F9F9F9;
+            border-radius: 8px;
+            border-left: 4px solid #10B981;
+        }
+
+        .message-block.ai {
+            border-left-color: #FF0000;
+        }
+
+        .message-block.customer {
+            border-left-color: #3B82F6;
+        }
+
+        .message-body {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .message-translation {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #DDD;
+            font-size: 13px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .view-transcript-btn {
+            background: #FF0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .view-transcript-btn:hover {
+            background: #cc0000;
+        }
+
+        /* Language Selection Display */
+        .language-selection-box {
+            background: #F0F7FF;
+            border: 2px solid #3B82F6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .language-option-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .option-number {
+            background: #FF0000;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .tty-option {
+            background: #FFF9E6;
+            border: 2px solid #D97706;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .footer {
+            background: #000;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 13px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <h1 id="header-title">🔧 Frontier Agent Dashboard - Test Cases</h1>
+            <p id="header-subtitle">Real-Time AI Network Diagnostics System</p>
+        </div>
+        <div class="header-language-toggle" id="language-toggle-container">
+            <button class="lang-btn active" onclick="switchDashboardLanguage('en')">
+                🇺🇸 English
+            </button>
+        </div>
+    </div>
+
+    <!-- Test Case Selector -->
+    <div class="test-case-bar">
+        <label id="test-label">🧪 Select Test Case:</label>
+        <select id="test-case-selector">
+            <option value="spanish-phone">Spanish Customer - Phone Issue</option>
+            <option value="french-internet">French Customer - Internet Issue</option>
+            <option value="german-tv">German Customer - TV Issue</option>
+            <option value="portuguese-mobile">Portuguese Customer - Mobile Issue</option>
+            <option value="italian-phone-internet">Italian Customer - Phone Issue</option>
+            <option value="chinese-internet">Chinese Customer - Internet Issue</option>
+            <option value="japanese-tv">Japanese Customer - TV Issue</option>
+            <option value="korean-phone">Korean Customer - Phone Issue</option>
+            <option value="hindi-mobile">Hindi Customer - Mobile Issue</option>
+            <option value="arabic-internet">Arabic Customer - Internet Issue</option>
+            <option value="english-all-services">English Customer - Internet Issue</option>
+            <option value="hearing-impaired">Hearing Impaired Customer (TTY)</option>
+        </select>
+        <button onclick="loadTestCase()" id="load-btn">Load Test Case</button>
+        <button onclick="randomTestCase()" id="random-btn">Random Test</button>
+        <button onclick="showLanguagePrompt()" style="background: #3B82F6;">View Language Prompt</button>
+    </div>
+
+    <!-- Agent Menu -->
+    <div class="agent-menu">
+        <button class="agent-button">
+            <span>👤</span>
+            <span id="agent-text">Agent: Sarah Johnson</span>
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+
+        <!-- Top Grid: Customer Info + Status -->
+        <div class="dashboard-grid">
+            
+            <!-- Customer Info Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">📞</span>
+                    <h2 id="card-customer">Customer Information</h2>
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-label" id="label-calling">Calling From:</div>
+                    <div class="info-value" id="customer-tn">555-234-5678 <span style="color: #10B981; font-weight: 600;" id="confirmed-badge">✓ CONFIRMED</span></div>
+                    
+                    <div class="info-label" id="label-name">Customer Name:</div>
+                    <div class="info-value" id="customer-name">María García</div>
+                    
+                    <div class="info-label" id="label-account">Account #:</div>
+                    <div class="info-value" id="customer-account">FTR-2345671-01</div>
+                    
+                    <div class="info-label" id="label-language">Language:</div>
+                    <div class="info-value" id="customer-language">🇪🇸 Spanish (Español)</div>
+                    
+                    <div class="info-label" id="label-issue">Issue:</div>
+                    <div class="info-value" id="customer-issue">Phone - No dial tone</div>
+                </div>
+            </div>
+
+            <!-- Current Status Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🚦</span>
+                    <h2 id="card-status">Current Status</h2>
+                </div>
+                
+                <div class="diagnostic-box">
+                    <div class="diagnostic-status pulse" id="status-main">
+                        🟡 SERVICE SELECTED
+                    </div>
+                    <div class="diagnostic-substatus" id="status-sub">
+                        Ready to run diagnostics on Home Phone
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Customer Services Card -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-icon">📡</span>
+                <h2 id="card-services">Customer Services - Select Service with Issue</h2>
+            </div>
+
+            <div style="background: #FFF9E6; padding: 12px; border-radius: 6px; margin-bottom: 15px; border-left: 4px solid #D97706;">
+                <strong id="ai-question-label">AI Question to Customer:</strong> <span id="ai-question">"I see you have multiple services. Which service are you experiencing issues with?"</span>
+            </div>
+            
+            <div class="services-grid" id="services-grid">
+                <div class="service-card active" data-service="phone">
+                    <div class="service-icon">📞</div>
+                    <div class="service-name" id="service-phone-name">Home Phone</div>
+                    <div class="service-status" id="service-phone-status">Active • 555-234-5678</div>
+                </div>
+
+                <div class="service-card" data-service="internet">
+                    <div class="service-icon">🌐</div>
+                    <div class="service-name">Internet</div>
+                    <div class="service-status" id="service-internet-status">Active • 500 Mbps</div>
+                </div>
+
+                <div class="service-card" data-service="tv">
+                    <div class="service-icon">📺</div>
+                    <div class="service-name" id="service-tv-name">TV Service</div>
+                    <div class="service-status" id="service-tv-status">Active • Premium Package</div>
+                </div>
+
+                <div class="service-card" data-service="mobile">
+                    <div class="service-icon">📱</div>
+                    <div class="service-name" id="service-mobile-name">Mobile</div>
+                    <div class="service-status" id="service-mobile-status">Active • 2 Lines</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; padding: 15px; background: #F0FDF4; border-radius: 8px; border: 2px solid #10B981;">
+                <strong style="color: #059669;" id="selected-label">✓ Customer Selected:</strong>
+                <span id="selected-service-text"> Home Phone (555-234-5678)</span>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-icon">⚡</span>
+                <h2 id="card-actions">Quick Actions</h2>
+            </div>
+            
+            <div class="button-grid">
+                <button class="btn btn-primary" onclick="startDiagnostics()">
+                    <span id="btn-start">✓ Start Diagnostics</span>
+                </button>
+                <button class="btn btn-secondary">
+                    <span id="btn-account">👤 View Full Account</span>
+                </button>
+                <button class="btn btn-outline">
+                    <span id="btn-history">📋 View Service History</span>
+                </button>
+                <button class="btn btn-outline">
+                    <span id="btn-escalate">📤 Escalate to Specialist</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Second Grid: Next Steps + Communication -->
+        <div class="dashboard-grid">
+
+            <!-- Next Steps Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">📋</span>
+                    <h2 id="card-next">Next Steps</h2>
+                </div>
+                
+                <div class="steps-container">
+                    <div class="step" id="step-1">
+                        Run diagnostics on Home Phone service
+                    </div>
+                    <div class="step" id="step-2">
+                        Check line quality and connection status
+                    </div>
+                    <div class="step" id="step-3">
+                        Identify root cause of issue
+                    </div>
+                    <div class="step" id="step-4">
+                        Apply auto-correction or provide resolution steps
+                    </div>
+                </div>
+            </div>
+
+            <!-- Communication Log Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">💬</span>
+                    <h2 id="card-comm">Communication Log</h2>
+                </div>
+                
+                <div style="margin-bottom: 15px; padding: 8px; background: #F0FDF4; border-radius: 6px; font-size: 13px;">
+                    <strong id="cust-lang-label">Customer Language:</strong> <span id="comm-language">🇪🇸 Spanish</span>
+                </div>
+                
+                <div id="communication-log">
+                    <!-- Will be populated by test case -->
+                </div>
+
+                <button class="view-transcript-btn" onclick="showFullTranscript()">
+                    <span id="btn-transcript">📄 View Full Transcript</span>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Actions Completed Card -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-icon">✅</span>
+                <h2 id="card-completed">Actions Completed</h2>
+            </div>
+
+            <div class="button-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                <div class="checklist-item completed">
+                    <span class="checklist-icon">✓</span>
+                    <span id="completed-1"><strong>Step 1:</strong> Language preference collected</span>
+                </div>
+                <div class="checklist-item completed">
+                    <span class="checklist-icon">✓</span>
+                    <span id="completed-2"><strong>Step 2:</strong> TN verified</span>
+                </div>
+                <div class="checklist-item completed">
+                    <span class="checklist-icon">✓</span>
+                    <span id="completed-3"><strong>Step 3:</strong> Account services retrieved</span>
+                </div>
+                <div class="checklist-item completed">
+                    <span class="checklist-icon">✓</span>
+                    <span id="completed-4"><strong>Step 4:</strong> Service with issue identified</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Case Summary -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-icon">📊</span>
+                <h2 id="card-summary">Case Summary</h2>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;">
+                <div class="summary-row">
+                    <div class="summary-label" id="summary-priority">PRIORITY</div>
+                    <div class="summary-value priority-medium" id="summary-priority-val">🟡 MEDIUM</div>
+                </div>
+                <div class="summary-row">
+                    <div class="summary-label" id="summary-time">TIME ELAPSED</div>
+                    <div class="summary-value">2 min 34 sec</div>
+                </div>
+                <div class="summary-row">
+                    <div class="summary-label" id="summary-workflow">WORKFLOW STAGE</div>
+                    <div class="summary-value" style="color: #D97706;" id="summary-workflow-val">3/5 - Service Selection</div>
+                </div>
+                <div class="summary-row">
+                    <div class="summary-label" id="summary-ready">READY FOR</div>
+                    <div class="summary-value" style="color: #10B981;" id="summary-ready-val">🟢 DIAGNOSTICS</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <strong>FRONTIER COMMUNICATIONS</strong> | <span id="footer-text">Agent Dashboard v2.0 | Test Mode - Powered by AI Diagnostics</span>
+    </div>
+
+    <!-- Language Selection Modal -->
+    <div class="modal" id="language-prompt-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🌐 Initial Language Selection Prompt</h3>
+                <button class="close-modal" onclick="closeLanguagePrompt()">×</button>
+            </div>
+            
+            <div class="language-selection-box">
+                <h3 style="margin-bottom: 15px; text-align: center;">Welcome to Frontier Communications</h3>
+                <p style="text-align: center; margin-bottom: 20px; font-size: 14px;">
+                    <strong>Please select your preferred language by pressing the corresponding number on your phone or by saying the language name.</strong><br>
+                    <em>Por favor seleccione su idioma preferido presionando el número correspondiente o diciendo el nombre del idioma.</em>
+                </p>
+
+                <div class="language-option-item">
+                    <span class="option-number">1</span>
+                    <span><strong>English</strong> - Press 1 or say "English"</span>
+                </div>
+
+                <div class="language-option-item">
+                    <span class="option-number">2</span>
+                    <span><strong>Español (Spanish)</strong> - Presione 2 o diga "Español"</span>
+                </div>
+
+                <div class="language-option-item">
+                    <span class="option-number">3</span>
+                    <span><strong>Français (French)</strong> - Appuyez sur 3 ou dites "Français"</span>
+                </div>
+
+                <div class="language-option-item">
+                    <span class="option-number">4</span>
+                    <span><strong>Deutsch (German)</strong> - Drücken Sie 4 oder sagen Sie "Deutsch"</span>
+                </div>
+
+                <div class="language-option-item">
+                    <span class="option-number">5</span>
+                    <span><strong>Português (Portuguese)</strong> - Pressione 5 ou diga "Português"</span>
+                </div>
+
+                <div class="language-option-item">
+                    <span class="option-number">6</span>
+                    <span><strong>Italiano (Italian)</strong> - Premere 6 o dire "Italiano"</span>
+                </div>
+
+                <div class="language-option-item">
+                    <span class="option-number">7</span>
+                    <span><strong>中文 (Chinese)</strong> - 按7或说"中文"</span>
+                </div>
+
+                <div class="language-option-item">
+                    <span class="option-number">8</span>
+                    <span><strong>日本語 (Japanese)</strong> - 8を押すか「日本語」と言ってください</span>
+                </div>
+
+                <div class="language-option-item">
+                    <span class="option-number">9</span>
+                    <span><strong>한국어 (Korean)</strong> - 9를 누르거나 "한국어"라고 말하세요</span>
+                </div>
+
+                <div class="language-option-item">
+                    <span class="option-number">10</span>
+                    <span><strong>हिन्दी (Hindi)</strong> - 10 दबाएं या "हिन्दी" कहें</span>
+                </div>
+
+                <div class="language-option-item">
+                    <span class="option-number">11</span>
+                    <span><strong>العربية (Arabic)</strong> - اضغط 11 أو قل "العربية"</span>
+                </div>
+
+                <div class="language-option-item tty-option">
+                    <span class="option-number" style="background: #D97706;">0</span>
+                    <span><strong>♿ TTY/Hearing Impaired</strong> - Press 0 for text relay service<br>
+                    <em style="font-size: 12px;">Presione 0 para servicio de retransmisión de texto</em></span>
+                </div>
+            </div>
+
+            <div style="background: #F0F7FF; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                <h4 style="margin-bottom: 10px;">📝 Voice Recognition Available</h4>
+                <p style="font-size: 13px; margin-bottom: 8px;">
+                    <strong>Customers can say:</strong> "English", "Spanish", "Français", "Deutsch", "Português", "Italiano", "Chinese", "Japanese", "Korean", "Hindi", "Arabic"
+                </p>
+                <p style="font-size: 13px; margin-bottom: 8px;">
+                    <strong>Or press:</strong> Numbers 1-11 on phone keypad
+                </p>
+                <p style="font-size: 13px; color: #D97706;">
+                    <strong>For TTY/Accessibility:</strong> Press 0 or say "TTY" or "Text relay"
+                </p>
+            </div>
+
+            <div style="background: #FFF9E6; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #D97706;">
+                <h4 style="margin-bottom: 10px;">♿ Accessibility Features</h4>
+                <p style="font-size: 13px;">
+                    Pressing <strong>0</strong> or saying <strong>"TTY"</strong> will connect the customer to our text relay service for hearing impaired customers. This service provides real-time text communication with our support team.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Transcript Modal -->
+    <div class="modal" id="transcript-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">📄 Full Conversation Transcript</h3>
+                <button class="close-modal" onclick="closeTranscriptModal()">×</button>
+            </div>
+            <div id="transcript-body">
+                <!-- Full transcript will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Language metadata
+        const languageMetadata = {
+            en: { flag: '🇺🇸', name: 'English', number: 1 },
+            es: { flag: '🇪🇸', name: 'Español', number: 2 },
+            fr: { flag: '🇫🇷', name: 'Français', number: 3 },
+            de: { flag: '🇩🇪', name: 'Deutsch', number: 4 },
+            pt: { flag: '🇵🇹', name: 'Português', number: 5 },
+            it: { flag: '🇮🇹', name: 'Italiano', number: 6 },
+            zh: { flag: '🇨🇳', name: '中文', number: 7 },
+            ja: { flag: '🇯🇵', name: '日本語', number: 8 },
+            ko: { flag: '🇰🇷', name: '한국어', number: 9 },
+            hi: { flag: '🇮🇳', name: 'हिन्दी', number: 10 },
+            ar: { flag: '🇸🇦', name: 'العربية', number: 11 },
+            tty: { flag: '♿', name: 'TTY/Text Relay', number: 0 }
+        };
+
+        // Translations (keeping your existing translation object)
+        const translations = {
+            en: {
+                'header.title': '🔧 Frontier Agent Dashboard - Test Cases',
+                'header.subtitle': 'Real-Time AI Network Diagnostics System',
+                'test.label': '🧪 Select Test Case:',
+                'test.load': 'Load Test Case',
+                'test.random': 'Random Test',
+                'agent.text': 'Agent: Sarah Johnson',
+                'card.customer': 'Customer Information',
+                'label.calling': 'Calling From:',
+                'confirmed.badge': '✓ CONFIRMED',
+                'label.name': 'Customer Name:',
+                'label.account': 'Account #:',
+                'label.language': 'Language:',
+                'label.issue': 'Issue:',
+                'card.status': 'Current Status',
+                'status.main': '🟡 SERVICE SELECTED',
+                'status.sub': 'Ready to run diagnostics on Home Phone',
+                'card.services': 'Customer Services - Select Service with Issue',
+                'ai.question.label': 'AI Question to Customer:',
+                'ai.question': '"I see you have multiple services. Which service are you experiencing issues with?"',
+                'service.phone.name': 'Home Phone',
+                'service.phone.status': 'Active • 555-234-5678',
+                'service.internet.status': 'Active • 500 Mbps',
+                'service.tv.name': 'TV Service',
+                'service.tv.status': 'Active • Premium Package',
+                'service.mobile.name': 'Mobile',
+                'service.mobile.status': 'Active • 2 Lines',
+                'selected.label': '✓ Customer Selected:',
+                'card.actions': 'Quick Actions',
+                'btn.start': '✓ Start Diagnostics',
+                'btn.account': '👤 View Full Account',
+                'btn.history': '📋 View Service History',
+                'btn.escalate': '📤 Escalate to Specialist',
+                'card.next': 'Next Steps',
+                'step.1': 'Run diagnostics on Home Phone service',
+                'step.2': 'Check line quality and connection status',
+                'step.3': 'Identify root cause of issue',
+                'step.4': 'Apply auto-correction or provide resolution steps',
+                'card.comm': 'Communication Log',
+                'cust.lang.label': 'Customer Language:',
+                'btn.transcript': '📄 View Full Transcript',
+                'card.completed': 'Actions Completed',
+                'completed.1': '<strong>Step 1:</strong> Language preference collected',
+                'completed.2': '<strong>Step 2:</strong> TN verified',
+                'completed.3': '<strong>Step 3:</strong> Account services retrieved',
+                'completed.4': '<strong>Step 4:</strong> Service with issue identified',
+                'card.summary': 'Case Summary',
+                'summary.priority': 'PRIORITY',
+                'summary.priority.val': '🟡 MEDIUM',
+                'summary.time': 'TIME ELAPSED',
+                'summary.workflow': 'WORKFLOW STAGE',
+                'summary.workflow.val': '3/5 - Service Selection',
+                'summary.ready': 'READY FOR',
+                'summary.ready.val': '🟢 DIAGNOSTICS',
+                'footer.text': 'Agent Dashboard v2.0 | Test Mode - Powered by AI Diagnostics',
+                'modal.title': '📄 Full Conversation Transcript'
+            },
+            es: {
+                'header.title': '🔧 Panel de Agente Frontier - Casos de Prueba',
+                'header.subtitle': 'Sistema de Diagnóstico de Red en Tiempo Real con IA',
+                'test.label': '🧪 Seleccionar Caso de Prueba:',
+                'test.load': 'Cargar Caso',
+                'test.random': 'Prueba Aleatoria',
+                'agent.text': 'Agente: Sarah Johnson',
+                'card.customer': 'Información del Cliente',
+                'label.calling': 'Llamando desde:',
+                'confirmed.badge': '✓ CONFIRMADO',
+                'label.name': 'Nombre del Cliente:',
+                'label.account': 'Cuenta #:',
+                'label.language': 'Idioma:',
+                'label.issue': 'Problema:',
+                'card.status': 'Estado Actual',
+                'status.main': '🟡 SERVICIO SELECCIONADO',
+                'status.sub': 'Listo para ejecutar diagnósticos en Teléfono Residencial',
+                'card.services': 'Servicios del Cliente - Seleccionar Servicio con Problema',
+                'ai.question.label': 'Pregunta de IA al Cliente:',
+                'ai.question': '"Veo que tiene múltiples servicios. ¿Con qué servicio está experimentando problemas?"',
+                'service.phone.name': 'Teléfono Residencial',
+                'service.phone.status': 'Activo • 555-234-5678',
+                'service.internet.status': 'Activo • 500 Mbps',
+                'service.tv.name': 'Servicio de TV',
+                'service.tv.status': 'Activo • Paquete Premium',
+                'service.mobile.name': 'Móvil',
+                'service.mobile.status': 'Activo • 2 Líneas',
+                'selected.label': '✓ Cliente Seleccionó:',
+                'card.actions': 'Acciones Rápidas',
+                'btn.start': '✓ Iniciar Diagnósticos',
+                'btn.account': '👤 Ver Cuenta Completa',
+                'btn.history': '📋 Ver Historial de Servicio',
+                'btn.escalate': '📤 Escalar a Especialista',
+                'card.next': 'Próximos Pasos',
+                'step.1': 'Ejecutar diagnósticos en servicio de Teléfono Residencial',
+                'step.2': 'Verificar calidad de línea y estado de conexión',
+                'step.3': 'Identificar causa raíz del problema',
+                'step.4': 'Aplicar auto-corrección o proporcionar pasos de resolución',
+                'card.comm': 'Registro de Comunicación',
+                'cust.lang.label': 'Idioma del Cliente:',
+                'btn.transcript': '📄 Ver Transcripción Completa',
+                'card.completed': 'Acciones Completadas',
+                'completed.1': '<strong>Paso 1:</strong> Preferencia de idioma recopilada',
+                'completed.2': '<strong>Paso 2:</strong> TN verificado',
+                'completed.3': '<strong>Paso 3:</strong> Servicios de cuenta recuperados',
+                'completed.4': '<strong>Paso 4:</strong> Servicio con problema identificado',
+                'card.summary': 'Resumen del Caso',
+                'summary.priority': 'PRIORIDAD',
+                'summary.priority.val': '🟡 MEDIA',
+                'summary.time': 'TIEMPO TRANSCURRIDO',
+                'summary.workflow': 'ETAPA DEL FLUJO',
+                'summary.workflow.val': '3/5 - Selección de Servicio',
+                'summary.ready': 'LISTO PARA',
+                'summary.ready.val': '🟢 DIAGNÓSTICOS',
+                'footer.text': 'Panel de Agente v2.0 | Modo de Prueba - Impulsado por Diagnósticos IA',
+                'modal.title': '📄 Transcripción Completa de la Conversación'
+            }
+        };
+
+        // Test Case Data (adding TTY option)
+        const testCases = {
+            'spanish-phone': {
+                name: 'María García',
+                tn: '555-234-5678',
+                account: 'FTR-2345671-01',
+                language: '🇪🇸 Spanish (Español)',
+                languageCode: 'es',
+                languageMethod: 'Pressed 2',
+                service: 'phone',
+                serviceName: 'Home Phone',
+                issue: 'No dial tone',
+                messages: [
+                    { type: 'ai', text: 'Bienvenido a Frontier. Seleccione su idioma preferido.', translation: 'Welcome to Frontier. Select your preferred language.' },
+                    { type: 'customer', text: '[Presionó 2] Español', translation: '[Pressed 2] Spanish' },
+                    { type: 'ai', text: '¿Está llamando desde 555-234-5678?', translation: 'Are you calling from 555-234-5678?' },
+                    { type: 'customer', text: 'Sí', translation: 'Yes' },
+                    { type: 'ai', text: '¿Qué servicio tiene problemas?', translation: 'Which service has issues?' },
+                    { type: 'customer', text: 'Teléfono', translation: 'Phone' }
+                ]
+            },
+            'french-internet': {
+                name: 'Pierre Dubois',
+                tn: '555-345-6789',
+                account: 'FTR-3456782-02',
+                language: '🇫🇷 French (Français)',
+                languageCode: 'fr',
+                languageMethod: 'Said "Français"',
+                service: 'internet',
+                serviceName: 'Internet',
+                issue: 'Slow speeds',
+                messages: [
+                    { type: 'ai', text: 'Bienvenue chez Frontier.', translation: 'Welcome to Frontier.' },
+                    { type: 'customer', text: '[Dit "Français"]', translation: '[Said "Français"]' }
+                ]
+            },
+            'hearing-impaired': {
+                name: 'David Williams',
+                tn: '555-999-8888',
+                account: 'FTR-9998881-12',
+                language: '♿ TTY/Text Relay (English)',
+                languageCode: 'en',
+                languageMethod: 'Pressed 0 for TTY',
+                service: 'internet',
+                serviceName: 'Internet',
+                issue: 'Connection issues',
+                messages: [
+                    { type: 'ai', text: '[TTY ACTIVATED] Welcome to Frontier text relay service. How may I help you?', translation: '[TTY ACTIVATED] Welcome to Frontier text relay service. How may I help you?' },
+                    { type: 'customer', text: '[TTY] Internet not working', translation: '[TTY] Internet not working' },
+                    { type: 'ai', text: '[TTY] I understand. Let me check your internet service. Are you calling about 555-999-8888?', translation: '[TTY] I understand. Let me check your internet service. Are you calling about 555-999-8888?' },
+                    { type: 'customer', text: '[TTY] Yes', translation: '[TTY] Yes' }
+                ]
+            },
+            'german-tv': {
+                name: 'Hans Mueller',
+                tn: '555-456-7890',
+                account: 'FTR-4567893-03',
+                language: '🇩🇪 German (Deutsch)',
+                languageCode: 'de',
+                languageMethod: 'Pressed 4',
+                service: 'tv',
+                serviceName: 'TV Service',
+                issue: 'No signal',
+                messages: [
+                    { type: 'ai', text: 'Willkommen bei Frontier.', translation: 'Welcome to Frontier.' },
+                    { type: 'customer', text: '[Drückte 4] Deutsch', translation: '[Pressed 4] German' }
+                ]
+            },
+            'portuguese-mobile': {
+                name: 'Ana Silva',
+                tn: '555-567-8901',
+                account: 'FTR-5678904-04',
+                language: '🇵🇹 Portuguese (Português)',
+                languageCode: 'pt',
+                languageMethod: 'Said "Português"',
+                service: 'mobile',
+                serviceName: 'Mobile',
+                issue: 'No signal',
+                messages: [
+                    { type: 'ai', text: 'Bem-vindo ao Frontier.', translation: 'Welcome to Frontier.' },
+                    { type: 'customer', text: '[Disse "Português"]', translation: '[Said "Português"]' }
+                ]
+            },
+            'italian-phone-internet': {
+                name: 'Giuseppe Rossi',
+                tn: '555-678-9012',
+                account: 'FTR-6789015-05',
+                language: '🇮🇹 Italian (Italiano)',
+                languageCode: 'it',
+                languageMethod: 'Pressed 6',
+                service: 'phone',
+                serviceName: 'Home Phone',
+                issue: 'No service',
+                messages: [
+                    { type: 'ai', text: 'Benvenuto in Frontier.', translation: 'Welcome to Frontier.' },
+                    { type: 'customer', text: '[Premuto 6] Italiano', translation: '[Pressed 6] Italian' }
+                ]
+            },
+            'chinese-internet': {
+                name: '李明 (Li Ming)',
+                tn: '555-789-0123',
+                account: 'FTR-7890126-06',
+                language: '🇨🇳 Chinese (中文)',
+                languageCode: 'zh',
+                languageMethod: 'Pressed 7',
+                service: 'internet',
+                serviceName: 'Internet',
+                issue: 'Connection drops',
+                messages: [
+                    { type: 'ai', text: '欢迎来到Frontier。', translation: 'Welcome to Frontier.' },
+                    { type: 'customer', text: '[按了7] 中文', translation: '[Pressed 7] Chinese' }
+                ]
+            },
+            'japanese-tv': {
+                name: '田中太郎 (Tanaka Taro)',
+                tn: '555-890-1234',
+                account: 'FTR-8901237-07',
+                language: '🇯🇵 Japanese (日本語)',
+                languageCode: 'ja',
+                languageMethod: 'Said "日本語"',
+                service: 'tv',
+                serviceName: 'TV Service',
+                issue: 'Poor picture quality',
+                messages: [
+                    { type: 'ai', text: 'Frontierへようこそ。', translation: 'Welcome to Frontier.' },
+                    { type: 'customer', text: '[「日本語」と言いました]', translation: '[Said "Japanese"]' }
+                ]
+            },
+            'korean-phone': {
+                name: '김민수 (Kim Min-soo)',
+                tn: '555-901-2345',
+                account: 'FTR-9012348-08',
+                language: '🇰🇷 Korean (한국어)',
+                languageCode: 'ko',
+                languageMethod: 'Pressed 9',
+                service: 'phone',
+                serviceName: 'Home Phone',
+                issue: 'Static on line',
+                messages: [
+                    { type: 'ai', text: 'Frontier에 오신 것을 환영합니다.', translation: 'Welcome to Frontier.' },
+                    { type: 'customer', text: '[9를 눌렀습니다] 한국어', translation: '[Pressed 9] Korean' }
+                ]
+            },
+            'hindi-mobile': {
+                name: 'राज कुमार (Raj Kumar)',
+                tn: '555-012-3456',
+                account: 'FTR-0123459-09',
+                language: '🇮🇳 Hindi (हिन्दी)',
+                languageCode: 'hi',
+                languageMethod: 'Pressed 10',
+                service: 'mobile',
+                serviceName: 'Mobile',
+                issue: 'No data',
+                messages: [
+                    { type: 'ai', text: 'Frontier में आपका स्वागत है।', translation: 'Welcome to Frontier.' },
+                    { type: 'customer', text: '[10 दबाया] हिन्दी', translation: '[Pressed 10] Hindi' }
+                ]
+            },
+            'arabic-internet': {
+                name: 'أحمد محمد (Ahmad Mohammad)',
+                tn: '555-123-4567',
+                account: 'FTR-1234560-10',
+                language: '🇸🇦 Arabic (العربية)',
+                languageCode: 'ar',
+                languageMethod: 'Said "العربية"',
+                service: 'internet',
+                serviceName: 'Internet',
+                issue: 'Cannot connect',
+                messages: [
+                    { type: 'ai', text: 'مرحبا بكم في Frontier.', translation: 'Welcome to Frontier.' },
+                    { type: 'customer', text: '[قال "العربية"]', translation: '[Said "Arabic"]' }
+                ]
+            },
+            'english-all-services': {
+                name: 'Robert Johnson',
+                tn: '555-234-5679',
+                account: 'FTR-2345679-11',
+                language: '🇺🇸 English',
+                languageCode: 'en',
+                languageMethod: 'Said "English"',
+                service: 'internet',
+                serviceName: 'Internet',
+                issue: 'Intermittent connection',
+                messages: [
+                    { type: 'ai', text: 'Welcome to Frontier.', translation: 'Welcome to Frontier.' },
+                    { type: 'customer', text: '[Said "English"]', translation: '[Said "English"]' }
+                ]
+            }
+        };
+
+        let currentTestCase = 'spanish-phone';
+        let currentDashboardLang = 'en';
+
+        // Show Language Prompt Modal
+        function showLanguagePrompt() {
+            document.getElementById('language-prompt-modal').classList.add('active');
+        }
+
+        // Close Language Prompt Modal
+        function closeLanguagePrompt() {
+            document.getElementById('language-prompt-modal').classList.remove('active');
+        }
+
+        // Translate the page
+        function translatePage(lang) {
+            const t = translations[lang] || translations['en'];
+            
+            const elements = {
+                'header-title': 'header.title',
+                'header-subtitle': 'header.subtitle',
+                'test-label': 'test.label',
+                'load-btn': 'test.load',
+                'random-btn': 'test.random',
+                'agent-text': 'agent.text',
+                'card-customer': 'card.customer',
+                'label-calling': 'label.calling',
+                'confirmed-badge': 'confirmed.badge',
+                'label-name': 'label.name',
+                'label-account': 'label.account',
+                'label-language': 'label.language',
+                'label-issue': 'label.issue',
+                'card-status': 'card.status',
+                'status-main': 'status.main',
+                'status-sub': 'status.sub',
+                'card-services': 'card.services',
+                'ai-question-label': 'ai.question.label',
+                'ai-question': 'ai.question',
+                'service-phone-name': 'service.phone.name',
+                'service-phone-status': 'service.phone.status',
+                'service-internet-status': 'service.internet.status',
+                'service-tv-name': 'service.tv.name',
+                'service-tv-status': 'service.tv.status',
+                'service-mobile-name': 'service.mobile.name',
+                'service-mobile-status': 'service.mobile.status',
+                'selected-label': 'selected.label',
+                'card-actions': 'card.actions',
+                'btn-start': 'btn.start',
+                'btn-account': 'btn.account',
+                'btn-history': 'btn.history',
+                'btn-escalate': 'btn.escalate',
+                'card-next': 'card.next',
+                'step-1': 'step.1',
+                'step-2': 'step.2',
+                'step-3': 'step.3',
+                'step-4': 'step.4',
+                'card-comm': 'card.comm',
+                'cust-lang-label': 'cust.lang.label',
+                'btn-transcript': 'btn.transcript',
+                'card-completed': 'card.completed',
+                'card-summary': 'card.summary',
+                'summary-priority': 'summary.priority',
+                'summary-priority-val': 'summary.priority.val',
+                'summary-time': 'summary.time',
+                'summary-workflow': 'summary.workflow',
+                'summary-workflow-val': 'summary.workflow.val',
+                'summary-ready': 'summary.ready',
+                'summary-ready-val': 'summary.ready.val',
+                'footer-text': 'footer.text',
+                'modal-title': 'modal.title'
+            };
+
+            for (const [elementId, translationKey] of Object.entries(elements)) {
+                const element = document.getElementById(elementId);
+                if (element && t[translationKey]) {
+                    element.textContent = t[translationKey];
+                }
+            }
+
+            if (t['completed.1']) document.getElementById('completed-1').innerHTML = t['completed.1'];
+            if (t['completed.2']) document.getElementById('completed-2').innerHTML = t['completed.2'];
+            if (t['completed.3']) document.getElementById('completed-3').innerHTML = t['completed.3'];
+            if (t['completed.4']) document.getElementById('completed-4').innerHTML = t['completed.4'];
+        }
+
+        function updateLanguageButtons(customerLangCode) {
+            const container = document.getElementById('language-toggle-container');
+            container.innerHTML = '';
+
+            const btnEnglish = document.createElement('button');
+            btnEnglish.className = 'lang-btn' + (currentDashboardLang === 'en' ? ' active' : '');
+            btnEnglish.onclick = () => switchDashboardLanguage('en');
+            btnEnglish.innerHTML = `${languageMetadata.en.flag} ${languageMetadata.en.name}`;
+            container.appendChild(btnEnglish);
+
+            if (customerLangCode && customerLangCode !== 'en') {
+                const btnCustomer = document.createElement('button');
+                btnCustomer.className = 'lang-btn' + (currentDashboardLang === customerLangCode ? ' active' : '');
+                btnCustomer.onclick = () => switchDashboardLanguage(customerLangCode);
+                btnCustomer.innerHTML = `${languageMetadata[customerLangCode].flag} ${languageMetadata[customerLangCode].name}`;
+                container.appendChild(btnCustomer);
+            }
+        }
+
+        function switchDashboardLanguage(lang) {
+            currentDashboardLang = lang;
+            translatePage(lang);
+            const testCase = testCases[currentTestCase];
+            updateLanguageButtons(testCase.languageCode);
+        }
+
+        function loadTestCase() {
+            const selector = document.getElementById('test-case-selector');
+            currentTestCase = selector.value;
+            applyTestCase(testCases[currentTestCase]);
+        }
+
+        function randomTestCase() {
+            const keys = Object.keys(testCases);
+            const randomKey = keys[Math.floor(Math.random() * keys.length)];
+            document.getElementById('test-case-selector').value = randomKey;
+            currentTestCase = randomKey;
+            applyTestCase(testCases[randomKey]);
+        }
+
+        function applyTestCase(testCase) {
+            document.getElementById('customer-name').textContent = testCase.name;
+            document.getElementById('customer-tn').innerHTML = `${testCase.tn} <span style="color: #10B981; font-weight: 600;" id="confirmed-badge">${translations[currentDashboardLang]['confirmed.badge']}</span>`;
+            document.getElementById('customer-account').textContent = testCase.account;
+            document.getElementById('customer-language').textContent = `${testCase.language} - ${testCase.languageMethod}`;
+            document.getElementById('customer-issue').textContent = `${testCase.serviceName} - ${testCase.issue}`;
+            document.getElementById('comm-language').textContent = testCase.language;
+            document.getElementById('selected-service-text').textContent = ` ${testCase.serviceName} (${testCase.tn})`;
+
+            updateLanguageButtons(testCase.languageCode);
+            translatePage(currentDashboardLang);
+
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.classList.remove('active');
+                if (card.dataset.service === testCase.service) {
+                    card.classList.add('active');
+                }
+            });
+
+            const logContainer = document.getElementById('communication-log');
+            logContainer.innerHTML = '';
+            testCase.messages.forEach((msg, index) => {
+                const logEntry = document.createElement('div');
+                logEntry.className = `log-entry ${msg.type === 'ai' ? 'sent' : 'received'}`;
+                logEntry.onclick = () => showMessageDetail(index, testCase.messages);
+                logEntry.innerHTML = `
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 13px;">
+                            ${msg.type === 'ai' ? '✓ AI:' : '📩 Customer:'} ${msg.text.substring(0, 50)}${msg.text.length > 50 ? '...' : ''}
+                        </div>
+                        <div class="log-time">Just now • Click to view</div>
+                    </div>
+                `;
+                logContainer.appendChild(logEntry);
+            });
+        }
+
+        function showMessageDetail(index, messages) {
+            const message = messages[index];
+            const modal = document.getElementById('transcript-modal');
+            const body = document.getElementById('transcript-body');
+            
+            body.innerHTML = `
+                <div class="message-block ${message.type === 'ai' ? 'ai' : 'customer'}">
+                    <div style="margin-bottom: 10px;">
+                        <strong>${message.type === 'ai' ? 'AI Assistant' : 'Customer'}</strong>
+                    </div>
+                    <div class="message-body">
+                        <strong>Message:</strong><br>
+                        ${message.text}
+                    </div>
+                    <div class="message-translation">
+                        <strong>English Translation:</strong><br>
+                        ${message.translation}
+                    </div>
+                </div>
+            `;
+            modal.classList.add('active');
+        }
+
+        function showFullTranscript() {
+            const testCase = testCases[currentTestCase];
+            const modal = document.getElementById('transcript-modal');
+            const body = document.getElementById('transcript-body');
+            
+            let content = `<h4 style="margin-bottom: 15px; color: #666;">Complete Conversation History</h4>`;
+            content += `<p style="margin-bottom: 20px; padding: 10px; background: #F0FDF4; border-radius: 6px;"><strong>Customer:</strong> ${testCase.name} | <strong>Language:</strong> ${testCase.language} | <strong>Selection Method:</strong> ${testCase.languageMethod}</p>`;
+            
+            testCase.messages.forEach((message) => {
+                content += `
+                    <div class="message-block ${message.type === 'ai' ? 'ai' : 'customer'}">
+                        <div style="margin-bottom: 10px;">
+                            <strong>${message.type === 'ai' ? 'AI Assistant' : 'Customer'}</strong>
+                        </div>
+                        <div class="message-body">
+                            <strong>Message:</strong><br>
+                            ${message.text}
+                        </div>
+                        <div class="message-translation">
+                            <strong>English Translation:</strong><br>
+                            ${message.translation}
+                        </div>
+                    </div>
+                `;
+            });
+
+            body.innerHTML = content;
+            modal.classList.add('active');
+        }
+
+        function closeTranscriptModal() {
+            document.getElementById('transcript-modal').classList.remove('active');
+        }
+
+        function startDiagnostics() {
+            const testCase = testCases[currentTestCase];
+            alert(`🔧 Starting diagnostics for:\n\nCustomer: ${testCase.name}\nService: ${testCase.serviceName}\nIssue: ${testCase.issue}\n\nDiagnostics will take 30-60 seconds...`);
+        }
+
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+
+        window.addEventListener('load', () => {
+            applyTestCase(testCases['spanish-phone']);
+        });
+    </script>
+
+</body>
+</html>
+
