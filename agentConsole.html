@@ -1251,7 +1251,7 @@
         };
 
         // Test Case Data (adding TTY option)
-        const testCases = {
+        const testCases = {/*
             'spanish-phone': {
                 name: 'María García',
                 tn: '555-234-5678',
@@ -1271,7 +1271,7 @@
                     { type: 'customer', text: 'Teléfono', translation: 'Phone' }
                 ]
             },
-                      /*  'french-internet': {
+                        'french-internet': {
                 name: 'Pierre Dubois',
                 tn: '555-345-6789',
                 account: 'FTR-3456782-02',
@@ -1285,7 +1285,7 @@
                     { type: 'ai', text: 'Bienvenue chez Frontier.', translation: 'Welcome to Frontier.' },
                     { type: 'customer', text: '[Dit "Français"]', translation: '[Said "Français"]' }
                 ]
-            },*/
+            },
             'hearing-impaired': {
                 name: 'David Williams',
                 tn: '555-999-8888',
@@ -1303,7 +1303,7 @@
                     { type: 'customer', text: '[TTY] Yes', translation: '[TTY] Yes' }
                 ]
             },
-            /*
+            
             'german-tv': {
                 name: 'Hans Mueller',
                 tn: '555-456-7890',
@@ -1447,7 +1447,7 @@
         let useDatabase = false; // Toggle between hardcoded and database test cases
         let lastHistoryInsights = null;
 
-        const historyInsights = {
+        const historyInsights = { /*
             'spanish-phone': {
                 lastUpdated: 'Today • 9:42 AM',
                 trends: [
@@ -1485,7 +1485,7 @@
                 chronic: [
                     { badge: '👍 Healthy account', detail: 'No chronic complaint flags currently on file' }
                 ]
-            }
+            }*/
         };
 
         // Show Language Prompt Modal
@@ -1959,73 +1959,155 @@
         }
 
         async function analyzeHistory() {
-            // If using database test case, fetch real history
-            if (useDatabase && databaseTestCases[currentTestCase]?.customerId) {
-                try {
-                    const customerId = databaseTestCases[currentTestCase].customerId;
-                    const response = await fetch(`/api/customers/${customerId}/history`);
-                    const data = await response.json();
-                    
-                    if (data.success && data.history.length > 0) {
-                        // Format history data for display
-                        const trends = [];
-                        const hotspots = [];
-                        const chronic = [];
-                        
-                        // Analyze history
-                        const issueCounts = {};
-                        data.history.forEach(ticket => {
-                            const issue = ticket.symptom_description || 'Unknown issue';
-                            issueCounts[issue] = (issueCounts[issue] || 0) + 1;
-                        });
-                        
-                        // Identify trends (recurring issues)
-                        Object.entries(issueCounts).forEach(([issue, count]) => {
-                            if (count >= 3) {
-                                chronic.push({
-                                    badge: `⚠️ ${count}x`,
-                                    detail: `${count} reports: ${issue.substring(0, 60)}${issue.length > 60 ? '...' : ''}`
-                                });
-                            } else if (count >= 2) {
-                                trends.push({
-                                    badge: `📊 ${count}x`,
-                                    detail: `${count} reports: ${issue.substring(0, 60)}${issue.length > 60 ? '...' : ''}`
-                                });
-                            }
-                        });
-                        
-                        // Recent issues as hotspots
-                        data.history.slice(0, 5).forEach(ticket => {
-                            hotspots.push({
-                                badge: ticket.severity || 'MEDIUM',
-                                detail: `${ticket.symptom_description || 'Issue'} - ${new Date(ticket.timestamp_created).toLocaleDateString()}`
-                            });
-                        });
-                        
-                        const insights = {
-                            lastUpdated: new Date().toLocaleString(),
-                            trends: trends.length > 0 ? trends : [{ badge: 'None', detail: 'No recurring issues detected' }],
-                            hotspots: hotspots.length > 0 ? hotspots : [{ badge: 'None', detail: 'No recent trouble spots' }],
-                            chronic: chronic.length > 0 ? chronic : [{ badge: 'None', detail: 'No chronic complaints identified' }]
-                        };
-                        
-                        renderHistoryInsights(insights);
-                    } else {
-                        // Fallback to default if no history
-                        const insights = historyInsights.default;
-                        renderHistoryInsights(insights);
-                    }
-                } catch (error) {
-                    console.error('Error fetching history:', error);
-                    // Fallback to default
-                    const insights = historyInsights.default;
+            // Get current customer information for searching
+            const currentCustomer = getCurrentCustomerInfo();
+            
+            try {
+                // Search for related incidents and tickets
+                const [incidentsResponse, ticketsResponse] = await Promise.all([
+                    fetch(`/api/incidents/search?customer=${encodeURIComponent(currentCustomer.name)}&phone=${encodeURIComponent(currentCustomer.phone)}&account=${encodeURIComponent(currentCustomer.account)}`),
+                    fetch(`/api/tickets/search?customer=${encodeURIComponent(currentCustomer.name)}&phone=${encodeURIComponent(currentCustomer.phone)}&account=${encodeURIComponent(currentCustomer.account)}`)
+                ]);
+                
+                const [incidentsData, ticketsData] = await Promise.all([
+                    incidentsResponse.json(),
+                    ticketsResponse.json()
+                ]);
+                
+                // Process incidents and tickets data
+                const allData = [
+                    ...(incidentsData.incidents || []).map(incident => ({
+                        ...incident,
+                        type: 'incident',
+                        source: 'Network Incidents'
+                    })),
+                    ...(ticketsData.tickets || []).map(ticket => ({
+                        ...ticket,
+                        type: 'ticket', 
+                        source: 'Support Tickets'
+                    }))
+                ];
+                
+                if (allData.length > 0) {
+                    const insights = analyzeIncidentData(allData, currentCustomer);
+                    renderHistoryInsights(insights);
+                } else {
+                    // No incidents found
+                    const insights = {
+                        lastUpdated: new Date().toLocaleString(),
+                        trends: [{ badge: '✅ Clean Record', detail: 'No network incidents or support tickets found for this customer' }],
+                        hotspots: [{ badge: '🟢 No Issues', detail: 'No recent network problems detected in the area' }],
+                        chronic: [{ badge: '👍 Stable Service', detail: 'No chronic service issues identified' }]
+                    };
                     renderHistoryInsights(insights);
                 }
-            } else {
-                // Use hardcoded insights for hardcoded test cases
-                const insights = historyInsights[currentTestCase] || historyInsights.default;
+                
+            } catch (error) {
+                console.error('Error fetching incident data:', error);
+                
+                // Show error and fallback to sample data
+                const insights = {
+                    lastUpdated: new Date().toLocaleString(),
+                    trends: [{ badge: '⚠️ Database Error', detail: 'Unable to fetch incident data - database connection failed' }],
+                    hotspots: [{ badge: '🔧 Service Notice', detail: 'Historical data temporarily unavailable - using cached analysis' }],
+                    chronic: [{ badge: '📞 Contact Support', detail: 'For detailed service history, please contact technical support' }]
+                };
                 renderHistoryInsights(insights);
             }
+        }
+
+        // Helper function to get current customer info
+        function getCurrentCustomerInfo() {
+            const currentTestCaseData = testCases[currentTestCase] || databaseTestCases[currentTestCase] || {};
+            return {
+                name: document.getElementById('customer-name')?.textContent || currentTestCaseData.name || 'Unknown Customer',
+                phone: document.getElementById('customer-tn')?.textContent?.split(' ')[0] || currentTestCaseData.tn || 'Unknown',
+                account: document.getElementById('customer-account')?.textContent || currentTestCaseData.account || 'Unknown'
+            };
+        }
+
+        // Analyze incident data and generate insights
+        function analyzeIncidentData(allData, customer) {
+            const trends = [];
+            const hotspots = [];
+            const chronic = [];
+            
+            // Sort data by date (newest first)
+            allData.sort((a, b) => new Date(b.created_at || b.timestamp_created || b.date) - new Date(a.created_at || a.timestamp_created || a.date));
+            
+            // Analyze incident types and patterns
+            const incidentCounts = {};
+            const serviceTypes = {};
+            const recentIncidents = [];
+            
+            allData.forEach(item => {
+                const incidentType = item.incident_type || item.category || item.type || 'General Issue';
+                const serviceType = item.service_type || item.service || 'Unknown Service';
+                const severity = item.severity || item.priority || 'Medium';
+                
+                // Count incident types
+                incidentCounts[incidentType] = (incidentCounts[incidentType] || 0) + 1;
+                serviceTypes[serviceType] = (serviceTypes[serviceType] || 0) + 1;
+                
+                // Collect recent incidents (last 30 days)
+                const itemDate = new Date(item.created_at || item.timestamp_created || item.date);
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                
+                if (itemDate > thirtyDaysAgo) {
+                    recentIncidents.push({
+                        type: incidentType,
+                        service: serviceType,
+                        severity: severity,
+                        date: itemDate,
+                        description: item.description || item.symptom_description || item.summary || 'No description',
+                        source: item.source
+                    });
+                }
+            });
+            
+            // Generate trends (recurring issue types)
+            Object.entries(incidentCounts).forEach(([type, count]) => {
+                if (count >= 3) {
+                    chronic.push({
+                        badge: `🔴 ${count}x`,
+                        detail: `Chronic issue: ${type} (${count} occurrences over time)`
+                    });
+                } else if (count >= 2) {
+                    trends.push({
+                        badge: `📊 ${count}x`,
+                        detail: `Recurring: ${type} (${count} incidents recorded)`
+                    });
+                }
+            });
+            
+            // Generate hotspots (recent incidents and service patterns)
+            recentIncidents.slice(0, 5).forEach((incident, index) => {
+                const timeAgo = Math.floor((new Date() - incident.date) / (1000 * 60 * 60 * 24));
+                const timeStr = timeAgo === 0 ? 'Today' : timeAgo === 1 ? 'Yesterday' : `${timeAgo} days ago`;
+                
+                hotspots.push({
+                    badge: `${incident.source === 'Network Incidents' ? '🌐' : '🎫'} ${incident.severity}`,
+                    detail: `${incident.type}: ${incident.description.substring(0, 50)}${incident.description.length > 50 ? '...' : ''} (${timeStr})`
+                });
+            });
+            
+            // Add service type analysis
+            Object.entries(serviceTypes).forEach(([service, count]) => {
+                if (count >= 2) {
+                    trends.push({
+                        badge: `🔧 ${service}`,
+                        detail: `Service area: ${count} incidents related to ${service}`
+                    });
+                }
+            });
+            
+            return {
+                lastUpdated: new Date().toLocaleString(),
+                trends: trends.length > 0 ? trends : [{ badge: '📈 Stable', detail: 'No recurring incident patterns detected' }],
+                hotspots: hotspots.length > 0 ? hotspots : [{ badge: '🟢 Clear', detail: 'No recent incidents in the last 30 days' }],
+                chronic: chronic.length > 0 ? chronic : [{ badge: '✅ Healthy', detail: 'No chronic service issues identified' }]
+            };
         }
 
         document.querySelectorAll('.modal').forEach(modal => {

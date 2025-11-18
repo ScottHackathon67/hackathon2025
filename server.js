@@ -321,6 +321,9 @@ app.get('/api/customers/:customerId/history', async (req, res) => {
   }
 });
 
+// Import and setup incident search routes
+const { setupIncidentRoutes } = require('./api_endpoints');
+setupIncidentRoutes(app);
 
 const PORT = process.env.PORT || 3000;
 
