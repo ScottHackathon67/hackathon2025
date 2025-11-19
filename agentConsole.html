@@ -1334,7 +1334,7 @@
                     { type: 'ai', text: 'Bienvenue chez Frontier.', translation: 'Welcome to Frontier.' },
                     { type: 'customer', text: '[Dit "Français"]', translation: '[Said "Français"]' }
                 ]
-            },
+            },*/
             'hearing-impaired': {
                 name: 'David Williams',
                 tn: '555-999-8888',
@@ -1352,7 +1352,7 @@
                     { type: 'customer', text: '[TTY] Yes', translation: '[TTY] Yes' }
                 ]
             },
-            
+            /*
             'german-tv': {
                 name: 'Hans Mueller',
                 tn: '555-456-7890',
@@ -1496,7 +1496,7 @@
         let useDatabase = false; // Toggle between hardcoded and database test cases
         let lastHistoryInsights = null;
 
-        const historyInsights = { /*
+        const historyInsights = { 
             'spanish-phone': {
                 lastUpdated: 'Today • 9:42 AM',
                 trends: [
@@ -1511,7 +1511,7 @@
                     { badge: '📞 Voice quality', detail: 'Customer contacted support 5 times over 90 days for similar issue' }
                 ]
             },
-            'deaf/hard-of-hearing': {
+                        'deaf/hard-of-hearing': {
                 lastUpdated: 'Yesterday • 4:18 PM',
                 trends: [
                     { badge: '🌐 Internet', detail: 'Frequent modem resets detected (6 in 48 hrs)' }
@@ -1522,8 +1522,8 @@
                 chronic: [
                     { badge: '♿ Accessibility', detail: 'Customer prefers TTY callbacks; prior commitments missed twice' }
                 ]
-            },
-            default: {
+            },  /*
+                        default: {
                 lastUpdated: 'This week',
                 trends: [
                     { badge: '📡 Network', detail: 'No repeating trouble trend detected for this service' }
