@@ -388,6 +388,147 @@ app.post('/api/auto-correct/execute', async (req, res) => {
   }
 });
 
+// Create network incident record
+app.post('/api/incidents/create', async (req, res) => {
+  try {
+    const {
+      incident_type,
+      severity,
+      description,
+      location,
+      service_type,
+      status = 'open',
+      affected_customers,
+      root_cause
+    } = req.body;
+    
+    if (!incident_type || !description || !service_type) {
+      return res.status(400).json({
+        success: false,
+        message: 'incident_type, description, and service_type are required'
+      });
+    }
+
+    const insertQuery = `
+      INSERT INTO team_scrappy_minds.network_incidents (
+        incident_id,
+        incident_type,
+        severity,
+        description,
+        location,
+        service_type,
+        status,
+        created_at,
+        affected_customers,
+        root_cause
+      ) VALUES (
+        'INC-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-' || LPAD(FLOOR(RANDOM() * 10000)::TEXT, 4, '0'),
+        $1, $2, $3, $4, $5, $6, NOW(), $7, $8
+      )
+      RETURNING incident_id, created_at
+    `;
+    
+    const values = [
+      incident_type,
+      severity || 'Medium',
+      description,
+      location || 'Unknown Location',
+      service_type,
+      status,
+      affected_customers || 1,
+      root_cause || 'Under investigation'
+    ];
+    
+    const result = await query(insertQuery, values);
+    
+    res.json({
+      success: true,
+      message: 'Network incident record created successfully',
+      incident: result.rows[0]
+    });
+    
+  } catch (error) {
+    console.error('Error creating network incident:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create network incident record',
+      error: error.message
+    });
+  }
+});
+
+// Create support ticket record
+app.post('/api/tickets/create', async (req, res) => {
+  try {
+    const {
+      customer_name,
+      phone_number,
+      account_number,
+      category,
+      priority = 'Medium',
+      status = 'open',
+      summary,
+      symptom_description,
+      agent_id = 'AUTO-DIAG'
+    } = req.body;
+    
+    if (!customer_name || !symptom_description || !category) {
+      return res.status(400).json({
+        success: false,
+        message: 'customer_name, symptom_description, and category are required'
+      });
+    }
+
+    const insertQuery = `
+      INSERT INTO team_scrappy_minds.support_tickets (
+        ticket_id,
+        customer_name,
+        phone_number,
+        account_number,
+        category,
+        priority,
+        status,
+        summary,
+        symptom_description,
+        agent_id,
+        timestamp_created
+      ) VALUES (
+        'TKT-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-' || LPAD(FLOOR(RANDOM() * 10000)::TEXT, 4, '0'),
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, NOW()
+      )
+      RETURNING ticket_id, timestamp_created
+    `;
+    
+    const values = [
+      customer_name,
+      phone_number || 'Unknown',
+      account_number || 'Unknown',
+      category,
+      priority,
+      status,
+      summary || symptom_description.substring(0, 100),
+      symptom_description,
+      agent_id
+    ];
+    
+    const result = await query(insertQuery, values);
+    
+    res.json({
+      success: true,
+      message: 'Support ticket record created successfully',
+      ticket: result.rows[0]
+    });
+    
+  } catch (error) {
+    console.error('Error creating support ticket:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create support ticket record',
+      error: error.message
+    });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 
 // Test database connection on startup
