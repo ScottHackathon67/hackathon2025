@@ -896,11 +896,102 @@ function displayDiagnosticResults(data) {
     // Update next steps with actual diagnostic recommendations
     updateNextStepsWithDiagnostic(data);
     
+    // Create network incident and support ticket records
+    createDiagnosticRecords(data);
+    
     // Trigger auto-correct analysis
     if (typeof analyzeAutoCorrectOptions === 'function') {
         // Get customer ID from test case if available
         const customerId = window.currentTestCase?.customerId || null;
         analyzeAutoCorrectOptions(data, customerId);
+    }
+}
+
+// Function to create diagnostic records (network incident and support ticket)
+async function createDiagnosticRecords(data) {
+    try {
+        // Get customer information from current test case if available
+        const customer = window.currentTestCase || {
+            name: 'Unknown Customer',
+            tn: '555-000-0000',
+            account: 'N/A',
+            location: 'Unknown Location'
+        };
+        
+        // Create network incident record
+        const incidentData = {
+            incident_type: 'Network Outage',
+            severity: data.severityLevel,
+            description: `${data.status.replace(/_/g, ' ')} - ${data.rootCause.description}`,
+            location: customer.location,
+            service_type: customer.service || 'internet',
+            status: 'open',
+            affected_customers: 1,
+            root_cause: data.rootCause.description
+        };
+        
+        const incidentResponse = await fetch('/api/incidents/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(incidentData)
+        });
+        
+        if (incidentResponse.ok) {
+            const incident = await incidentResponse.json();
+            console.log('Network incident created:', incident.incident);
+        } else {
+            console.error('Failed to create network incident:', await incidentResponse.text());
+        }
+        
+        // Create support ticket record
+        const ticketData = {
+            customer_name: customer.name,
+            phone_number: customer.tn,
+            account_number: customer.account,
+            category: 'Technical Support',
+            priority: data.severityLevel,
+            status: 'open',
+            summary: `${data.status.replace(/_/g, ' ')} - Diagnostic ID: ${data.diagnosticId}`,
+            symptom_description: `Customer experiencing ${data.status.toLowerCase().replace(/_/g, ' ')}. Root cause: ${data.rootCause.description}. Auto-correct attempt: ${data.autoCorrectAttempt.step} - ${data.autoCorrectAttempt.success ? 'Successful' : 'Failed'}`,
+            agent_id: 'AUTO-DIAG'
+        };
+        
+        const ticketResponse = await fetch('/api/tickets/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(ticketData)
+        });
+        
+        if (ticketResponse.ok) {
+            const ticket = await ticketResponse.json();
+            console.log('Support ticket created:', ticket.ticket);
+            
+            // Add notification to communication log
+            const logContainer = document.getElementById('communication-log');
+            if (logContainer) {
+                const recordsEntry = document.createElement('div');
+                recordsEntry.className = 'log-entry received';
+                recordsEntry.style.borderLeftColor = '#10B981';
+                recordsEntry.innerHTML = `
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 13px; color: #10B981;">
+                            ✅ Diagnostic Records Created
+                        </div>
+                        <div class="log-time">Network incident: ${incident.incident?.incident_id || 'Created'} | Support ticket: ${ticket.ticket?.ticket_id || 'Created'}</div>
+                    </div>
+                `;
+                logContainer.appendChild(recordsEntry);
+            }
+        } else {
+            console.error('Failed to create support ticket:', await ticketResponse.text());
+        }
+        
+    } catch (error) {
+        console.error('Error creating diagnostic records:', error);
     }
 }
 
