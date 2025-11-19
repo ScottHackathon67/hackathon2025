@@ -853,6 +853,32 @@
             </div>
         </div>
 
+        <!-- Agent Notes Card -->
+        <div class="card" id="agent-notes-card">
+            <div class="card-header">
+                <span class="card-icon">📝</span>
+                <h2 id="card-agent-notes">Agent Notes</h2>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <textarea 
+                    id="agent-notes-textarea" 
+                    placeholder="Add your notes about this customer interaction, observations, or important details..."
+                    style="width: 100%; min-height: 120px; padding: 12px; border: 2px solid #E5E7EB; border-radius: 8px; font-family: inherit; font-size: 14px; line-height: 1.5; resize: vertical;"
+                    rows="5">
+                </textarea>
+            </div>
+            
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="clearAgentNotes()" style="padding: 8px 16px;">
+                    🗑️ Clear Notes
+                </button>
+                <button class="btn btn-primary" onclick="saveAgentNotes()" style="padding: 8px 16px;">
+                    💾 Save Notes
+                </button>
+            </div>
+        </div>
+
         <!-- Auto-Correct Workflow Panel -->
         <div class="card" id="auto-correct-card" style="display: none;">
             <div class="card-header">
@@ -3283,6 +3309,46 @@
             
             body.innerHTML = content;
             modal.classList.add('active');
+        }
+
+        // Agent Notes Functions
+        function clearAgentNotes() {
+            const notesTextarea = document.getElementById('agent-notes-textarea');
+            if (notesTextarea) {
+                notesTextarea.value = '';
+                console.log('Agent notes cleared');
+            }
+        }
+
+        function saveAgentNotes() {
+            const notesTextarea = document.getElementById('agent-notes-textarea');
+            if (notesTextarea) {
+                const notes = notesTextarea.value;
+                localStorage.setItem('agentNotes', notes);
+                console.log('Agent notes saved:', notes);
+                showSaveConfirmation();
+            }
+        }
+
+        function showSaveConfirmation() {
+            const confirmation = document.createElement('div');
+            confirmation.textContent = 'Notes saved!';
+            confirmation.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #10B981;
+                color: white;
+                padding: 10px 15px;
+                border-radius: 5px;
+                z-index: 1001;
+                animation: fadeInOut 2s ease-in-out;
+            `;
+            
+            document.body.appendChild(confirmation);
+            setTimeout(() => {
+                confirmation.remove();
+            }, 2000);
         }
     </script>
 
